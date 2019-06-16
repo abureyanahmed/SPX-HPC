@@ -1,0 +1,2635 @@
+qsub -N edge_crossings -o log_files/edge_crossings.out -e log_files/edge_crossings.err -V edge_crossings.sh
+
+To delete all jobs from queue: qselect -u abureyanahmed | xargs qdel
+
+to get execution right in a file: chmod 777 file_name
+
+qsub -N layout_statistics -o log_files/layout_statistics.out -e log_files/layout_statistics.err -V layout_statistics.sh
+
+export NORMALIZE=0
+export FILE_NAME_PREFIX=input1
+export OUTPUT_FOLDER=input
+qsub -N edge_crossings -o log_files_init_xy/edge_crossings_input1_0.out -e log_files_init_xy/edge_crossings_input1_0.err -V edge_crossings.sh
+
+module load python/3.5/3.5.5
+python3 main_reyan.py 0 input1 input
+python3 main_reyan.py 0 input9 input_angle
+
+------------------------------------------------------
+Cython
+
+1. cp main_angles_reyan.py main_angles_reyan.pyx
+2. vi main_angles_reyan_setup.py
+3. module load python/3.5/3.5.5
+4. python3 main_angles_reyan_setup.py build_ext --inplace
+5. vi main_angles_reyan_import.py
+6. cp edge_crossings_angle.sh edge_crossings_angle_cython.sh
+7. qsub -N edge_crossings -o log_files_angle/edge_crossingser_50_0.1_cython.out -e log_files_angle/edge_crossingser_50_0.1_cython.err -V edge_crossings_angle_cython.sh
+
+-------------------------------------------------------
+jacob
+
+1. cp main_angles_reyan.pyx main_jacob.pyx
+2. cp main_angles_reyan_setup.py main_jacob_setup.py
+3. cp main_angles_reyan_import.py main_jacob_import.py
+4. vi main_jacob.pyx
+5. python3 main_jacob_setup.py build_ext --inplace
+6. vi main_jacob_import.py
+7. cp edge_crossings_angle_cython.sh edge_crossings_jacob.sh
+8. qsub -N edge_crossings -o log_files_angle/edge_crossingser_50_0.1_jacob.out -e log_files_angle/edge_crossingser_50_0.1_jacob.err -V edge_crossings_jacob.sh
+
+-------------------------------------------------------
+
+Don't use cython, its causing problem while importing
+
+1. cp main_jacob.pyx main_jacob.py
+2. vi create_qsubs.py (create_qsub_jacob())
+3. vi main_jacob.py
+4. cp edge_crossings_angle.sh edge_crossings_param.sh
+5. vi edge_crossings_param.sh
+6. python3 create_qsubs.py
+7. chmod 777 qsub_commands_jacob.sh
+8. ./qsub_commands_jacob.sh
+
+-------------------------------------------------------
+
+For angle
+
+1. scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/input_neato.zip input_angle/
+2. goto input folder
+3. unzip
+4. comeback
+5. cp main_jacob.py main_jacob_angle.py
+6. scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/main_angles_v1.py main_angles_v1.py
+7. add functions in main_jacob_angle.py
+8. vi iterators.py8. vi iterators.py8. vi iterators.py8. vi iterators.py8. vi iterators.py8. vi iterators.py8. vi iterators.py8. vi iterators.py
+9. cp edge_crossings_param.sh edge_crossings_param_angle.sh
+10. python3 create_qsubs.py
+11. ./qsub_commands_jacob.sh
+
+------------------------------------------------------
+
+export OUTPUT_FOLDER=input_angle
+export FILE_NAME_PREFIX=input6
+export W_start=1
+export W_end=2
+export K_start=-3
+export K_end=3
+export NUM_RUNS=3
+export num_iterations=6
+export NORMALIZE=1
+export OUTPUT_FILE_EXT=_W_1_NORM_1
+python3 main_jacob_angle.py $OUTPUT_FOLDER $FILE_NAME_PREFIX $W_start $W_end $K_start $K_end $NUM_RUNS $num_iterations $NORMALIZE $OUTPUT_FILE_EXT
+
+-----------------------------------------------------
+
+ssh i9n23
+
+export OUTPUT_FOLDER=input_angle
+export FILE_NAME_PREFIX=input1
+export W_start=1
+export W_end=2
+export K_start=-3
+export K_end=3
+export NUM_RUNS=3
+export num_iterations=6
+export NORMALIZE=0
+export OUTPUT_FILE_EXT=_W_1_NORM_0
+
+chmod 777 edge_crossings_param_angle.sh
+
+./edge_crossings_param_angle.sh
+
+-------------------------------------------------------
+
+Final angle (for contest)
+
+1. scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/input18.zip input_angle/
+2. cd input_angle/
+3. unzip input18.zip
+4. cd ..
+5. python3 create_qsubs.py
+6. chmod 777 edge_crossings_param_angle.sh
+7. chmod 777 qsub_commands_jacob_0.sh
+8. chmod 777 qsub_commands_jacob_1.sh
+9. chmod 777 qsub_commands_jacob_2.sh
+10. ./qsub_commands_jacob_0.sh (terminal 1)
+11. ./qsub_commands_jacob_1.sh (terminal 2)
+12. ./qsub_commands_jacob_2.sh (terminal 3)
+13. scp input_angle/*.npy abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/input18/
+
+
+------------------------------------------------------
+
+ssh i2n12
+ssh i5n18
+ssh i8n23
+ssh i3n12
+ssh i6n18
+ssh i9n23
+
+----------------------------------------------------------
+
+Check whether it introduces crossing:
+
+export OUTPUT_FOLDER=test_graphs
+export FILE_NAME_PREFIX=cycle3
+export W_start=1
+export W_end=2
+export K_start=1
+export K_end=2
+export NUM_RUNS=3
+export num_iterations=2
+export NORMALIZE=1
+export OUTPUT_FILE_EXT=_dummy
+python3 main_jacob_cycle3.py $OUTPUT_FOLDER $FILE_NAME_PREFIX $W_start $W_end $K_start $K_end $NUM_RUNS $num_iterations $NORMALIZE $OUTPUT_FILE_EXT
+
+scp test_graphs/cycle3_xy__dummy.npy abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/plots/
+scp test_graphs/cycle3.txt abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/plots/
+
+export OUTPUT_FOLDER=test_graphs
+export FILE_NAME_PREFIX=cycle4
+export W_start=1
+export W_end=2
+export K_start=1
+export K_end=2
+export NUM_RUNS=3
+export num_iterations=2
+export NORMALIZE=1
+export OUTPUT_FILE_EXT=_dummy
+python3 main_jacob_cycle4.py $OUTPUT_FOLDER $FILE_NAME_PREFIX $W_start $W_end $K_start $K_end $NUM_RUNS $num_iterations $NORMALIZE $OUTPUT_FILE_EXT
+
+scp test_graphs/cycle4_xy__dummy.npy abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/plots/
+scp test_graphs/cycle4.txt abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/plots/
+
+export OUTPUT_FOLDER=test_graphs
+export FILE_NAME_PREFIX=cycle5
+export W_start=1
+export W_end=2
+export K_start=1
+export K_end=2
+export NUM_RUNS=3
+export num_iterations=2
+export NORMALIZE=1
+export OUTPUT_FILE_EXT=_dummy
+python3 main_jacob_cycle5.py $OUTPUT_FOLDER $FILE_NAME_PREFIX $W_start $W_end $K_start $K_end $NUM_RUNS $num_iterations $NORMALIZE $OUTPUT_FILE_EXT
+
+scp test_graphs/cycle5_xy__dummy.npy abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/plots/
+scp test_graphs/cycle5.txt abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/plots/
+
+export OUTPUT_FOLDER=test_graphs
+export FILE_NAME_PREFIX=cycle6
+export W_start=1
+export W_end=2
+export K_start=1
+export K_end=2
+export NUM_RUNS=3
+export num_iterations=2
+export NORMALIZE=1
+export OUTPUT_FILE_EXT=_dummy
+python3 main_jacob_cycle6.py $OUTPUT_FOLDER $FILE_NAME_PREFIX $W_start $W_end $K_start $K_end $NUM_RUNS $num_iterations $NORMALIZE $OUTPUT_FILE_EXT
+
+scp test_graphs/cycle6_xy__dummy.npy abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/plots/
+scp test_graphs/cycle6.txt abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/plots/
+
+export OUTPUT_FOLDER=test_graphs
+export FILE_NAME_PREFIX=cycle20
+export W_start=1
+export W_end=2
+export K_start=1
+export K_end=2
+export NUM_RUNS=3
+export num_iterations=2
+export NORMALIZE=1
+export OUTPUT_FILE_EXT=_dummy
+python3 main_jacob_cycle20.py $OUTPUT_FOLDER $FILE_NAME_PREFIX $W_start $W_end $K_start $K_end $NUM_RUNS $num_iterations $NORMALIZE $OUTPUT_FILE_EXT
+
+scp test_graphs/cycle20_xy__dummy.npy abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/plots/
+scp test_graphs/cycle20.txt abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/plots/
+
+
+cp main_jacob_cycle3.py main_angle_init_drawing.py
+
+cd test_graphs
+python generate_tree.py 
+cd ..
+
+export OUTPUT_FOLDER=test_graphs
+export FILE_NAME_PREFIX=tree15
+export W_start=1
+export W_end=2
+export K_start=1
+export K_end=2
+export NUM_RUNS=3
+export num_iterations=2
+export NORMALIZE=1
+export OUTPUT_FILE_EXT=_dummy
+python3 main_angle_init_drawing.py $OUTPUT_FOLDER $FILE_NAME_PREFIX $W_start $W_end $K_start $K_end $NUM_RUNS $num_iterations $NORMALIZE $OUTPUT_FILE_EXT
+
+scp test_graphs/tree15_xy__dummy.npy abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/plots/
+scp test_graphs/tree15.txt abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/plots/
+
+cd test_graphs
+python generate_tree.py 
+cd ..
+cp test_graphs/tree127.txt test_graphs/other_tree127_2.txt
+
+export OUTPUT_FOLDER=test_graphs
+export FILE_NAME_PREFIX=tree127
+export W_start=1
+export W_end=2
+export K_start=1
+export K_end=2
+export NUM_RUNS=3
+export num_iterations=2
+export NORMALIZE=1
+export OUTPUT_FILE_EXT=_dummy
+python3 main_angle_init_drawing.py $OUTPUT_FOLDER $FILE_NAME_PREFIX $W_start $W_end $K_start $K_end $NUM_RUNS $num_iterations $NORMALIZE $OUTPUT_FILE_EXT
+
+scp test_graphs/tree127_xy__dummy.npy abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/plots/
+scp test_graphs/tree127.txt abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/plots/
+
+----------------------------------------------------------------------------------------------------------------------
+
+scp /extra/abureyanahmed/GD2018/main_jacob_angle.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/plots/
+
+----------------------------------------------------------------------------------------------------------------------
+
+Use high_priority:
+
+X1. scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/input18.zip input_angle/
+X2. cd input_angle/
+X3. unzip input18.zip
+X4. cd ..
+5. python3 create_qsubs_high_pri.py ( create_qsub_variable_param(0, 14, 100, "input_angle", 'crossings_angle', 'log_files_angle', 'crossings_angle_high_pri.sh')  )
+X7. chmod 777 qsub_commands_high_pri.sh
+10. ./qsub_commands_high_pri.sh
+??? zip the files and send then?
+13. scp input_angle/*.npy abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/input_angle/
+
+Input 2018:
+
+1544051.head1.cm.cluster
+...
+1544099.head1.cm.cluster
+
+create_qsub_variable_param(11, 14, 100, "input_angle", 'crossings_angle', 'log_files_angle', 'crossings_angle_high_pri.sh')
+
+1554439.head1
+...
+1554456.head1
+
+Input 2017:
+
+X1. scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2017/input.zip input_angle_17/
+X2. cd input_angle_17/
+X3. unzip input.zip
+X4. cd ..
+5. python3 create_qsubs_high_pri.py ( create_qsub_variable_param(0, 16, 100, "input_angle_17", 'crossings_angle', 'log_files_angle_17', 'crossings_angle_high_pri.sh')  )
+6. mkdir log_files_angle_17
+7. chmod 777 qsub_commands_high_pri.sh
+10. ./qsub_commands_high_pri.sh
+??? zip the files and send then? also input17
+13. scp input_angle_17/*.npy abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/input_angle_17/
+
+1544101.head1.cm.cluster
+...
+1544166.head1.cm.cluster
+
+---------------------------------------------------------------------------------------------------------------------
+
+Back to crossing minimization:
+
+X1. mkdir input_crossing
+2. cp input_angle/* input_crossing/
+5. python3 create_qsubs_high_pri.py ( create_qsub_variable_param(0, 14, 100, "input_crossing", 'edge_crossings', 'log_files_crossing', 'edge_crossings_high_pri.sh')  )
+X6. scp main_jacob.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+X7. scp main_jacob_angle.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+8. mkdir log_files_crossing
+10. ./qsub_commands_high_pri.sh
+13. scp input_crossing/*.npy abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/input_crossing/
+
+1544274.head1
+...
+1544322.head1
+
+create_qsub_variable_param(11, 14, 100, "input_crossing", 'edge_crossings', 'log_files_crossing', 'edge_crossings_high_pri.sh') #start from input 1 for 2018
+
+1556803.head1
+...
+1556820.head1
+
+Input 2017:
+
+X1. mkdir input_crossing_17
+2. cp input_angle_17/* input_crossing_17/
+5. python3 create_qsubs_high_pri.py ( create_qsub_variable_param(0, 16, 100, "input_crossing_17", 'edge_crossings', 'log_files_crossing_17', 'edge_crossings_high_pri.sh')  )
+X6. scp main_jacob.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+X7. scp main_jacob_angle.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+8. mkdir log_files_crossing_17
+10. ./qsub_commands_high_pri.sh
+13. scp input_crossing_17/*.npy abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/input_crossing_17/
+
+1544325.head1
+...
+1544390.head1
+
+-------------------------------------------------------------------------------------------------------------------
+
+partial function
+
+1. mkdir input_partial_func
+2. cp input_angle/* input_partial_func/
+5. python3 create_qsubs_high_pri.py ( create_qsub_variable_param(0, 14, 100, "input_partial_func", 'cross_anlge_par', 'log_files_angle_par', 'edge_crossings_par.sh')  )
+6. cp crossings_angle_high_pri.sh edge_crossings_par.sh
+8. mkdir log_files_angle_par
+10. ./qsub_commands_high_pri.sh
+
+1554016.head1
+...
+1554057.head1
+
+python norm_vs_par.py 
+
+-------------------------------------------------------------------------------------------------------------------
+
+mkdir crossing_min_random_drawing
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/crossing_min_random_drawing.zip crossing_min_random_drawing/
+cd crossing_min_random_drawing/
+unzip crossing_min_random_drawing.zip
+cd ..
+cp create_qsubs_high_pri.py create_qsubs_marcel.py
+
+community:
+
+python3 create_qsubs_marcel.py ( create_qsub_variable_param(100, "crossing_min_random_drawing/community", 'edge_crossings', 'log_files_community', 'edge_crossings_marcel.sh') )
+./qsub_commands_marcel.sh
+cd crossing_min_random_drawing/
+zip -r community.zip community/
+cd ..
+scp crossing_min_random_drawing/community.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+1560057.head1
+...
+1560515.head1
+edge_crossings_W_1_NORM_0_K_N1_0 -o log_files_community/edge_crossings_maxDeg5nodeDegreeExp-2.000000minCommunitySize2maxCommunitySize10communitySizeExp-1.000000avGDegree3iteration96graph_W_1_NORM_0_K_N1_0.out -e log_files_community/edge_crossings_maxDeg5nodeDegreeEx
+	p-2.000000minCommunitySize2maxCommunitySize10communitySizeExp-1.000000a
+	vGDegree3iteration96graph_W_1_NORM_0_K_N1_0.err -V edge_crossings_marce
+	l.sh
+
+1560528.head1
+...
+1560629.head1
+
+edge_crossings_W_1_NORM_0_K_N1_0 -o log_files_community/edge_crossings_maxDeg5nodeDegreeExp-2.000000minCommunitySize2maxCommunitySize10communitySizeExp-1.000000avGDegree3iteration67graph_W_1_NORM_0_K_N1_0.out -e log_files_community/edge_crossings_maxDeg5nodeDegreeEx
+	p-2.000000minCommunitySize2maxCommunitySize10communitySizeExp-1.000000a
+	vGDegree3iteration67graph_W_1_NORM_0_K_N1_0.err -V edge_crossings_marce
+	l.sh
+
+1560721.head1
+...
+1560759.head1
+
+north:
+
+python3 create_qsubs_marcel.py ( create_qsub_variable_param(100, "crossing_min_random_drawing/north", 'edge_crossings', 'log_files_north', 'edge_crossings_marcel.sh') )
+./qsub_commands_marcel.sh
+cd crossing_min_random_drawing/
+zip -r north.zip north/
+cd ..
+scp crossing_min_random_drawing/north.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+plantri:
+
+python3 create_qsubs_marcel.py ( create_qsub_variable_param(100, "crossing_min_random_drawing/plantri", 'edge_crossings', 'log_files_plantri', 'edge_crossings_marcel.sh') )
+./qsub_commands_marcel.sh
+cd crossing_min_random_drawing/
+zip -r plantri.zip plantri/
+rm -rf plantri/
+cd ..
+scp crossing_min_random_drawing/plantri.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+rome:
+
+python3 create_qsubs_marcel.py ( create_qsub_variable_param(100, "crossing_min_random_drawing/rome", 'edge_crossings', 'log_files_rome', 'edge_crossings_marcel.sh') )
+./qsub_commands_marcel.sh
+cd crossing_min_random_drawing/
+zip -r rome.zip rome/
+rm -rf rome/
+cd ..
+scp crossing_min_random_drawing/rome.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+-------------------------------------------------------------------------------------------------------------------
+
+New Gradient Descent:
+
+vanila, Input 2018::
+
+mkdir input_angle_vanila
+cp input_angle/* input_angle_vanila/
+python3 create_qsubs_high_pri.py | create_qsub_variable_param(0, 14, 100, "input_angle_vanila", 'crossings_angle', 'log_files_vanila', 'crossings_angle_simple_gradient.sh')
+mkdir log_files_vanila
+cp crossings_angle_high_pri.sh crossings_angle_simple_gradient.sh
+cp main_jacob_angle.py main_jacob_angle_simple_gradient.py 
+./qsub_commands_high_pri.sh
+scp input_angle_vanila/*.npy abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/input_angle_vanila/
+
+
+adam, Input 2018::
+
+mkdir input_angle_adam
+cp input_angle/* input_angle_adam/
+python3 create_qsubs_high_pri.py | create_qsub_variable_param(0, 14, 100, "input_angle_adam", 'crossings_angle', 'log_files_adam', 'crossings_angle_adam.sh')
+mkdir log_files_adam
+cp crossings_angle_high_pri.sh crossings_angle_adam.sh
+cp main_jacob_angle_simple_gradient.py main_jacob_angle_adam.py
+./qsub_commands_high_pri.sh
+scp input_angle_adam/*.npy abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/input_angle_adam/
+
+
+All new gradient descent, Input 2018:
+
+mkdir input_angle_new_GDs
+cp input_angle/input*.txt input_angle_new_GDs/
+cp input_angle/run_neato* input_angle_new_GDs/
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/input18.zip input_angle_new_GDs/
+2. cd input_angle_new_GDs/
+3. unzip input18.zip
+4. cd ..
+cp create_qsubs_high_pri.py create_qsubs_new_GDs.py
+vi create_qsubs_new_GDs.py
+python3 create_qsubs_new_GDs.py
+chmod 777 qsub_commands_new_GDs.sh
+cp crossings_angle_adam.sh crossings_angle_new_GDs.sh
+cp crossings_angle_new_GDs.sh crossings_angle_new_GDs_mem.sh
+cp main_jacob_angle_adam.py main_jacob_angle_new_GDs.py
+./qsub_commands_new_GDs.sh
+
+zip -r input_angle_new_GDs.zip input_angle_new_GDs/*.npy
+scp input_angle_new_GDs.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+1622009.head1
+...
+1622418.head1
+
+
+
+All new gradient descent, community:
+
+mkdir crossing_min_random_drawing/community_new_GDs/
+cp crossing_min_random_drawing/community/*.txt crossing_min_random_drawing/community_new_GDs/
+cp crossing_min_random_drawing/community/run_neato* crossing_min_random_drawing/community_new_GDs/
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/sfdp_community.zip crossing_min_random_drawing/community_new_GDs/
+cd crossing_min_random_drawing/community_new_GDs/
+unzip sfdp_community.zip
+rm sfdp_community.zip
+cd ..
+cd ..
+cp main_jacob.py main_jacob_new_GDs.py
+scp main_jacob_angle_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+scp main_jacob_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+cp create_qsubs_marcel.py create_qsubs_marcel_new_GDs.py
+scp create_qsubs_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+scp create_qsubs_marcel_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+mkdir log_files_community_new_GDs
+python3 create_qsubs_marcel_new_GDs.py
+chmod 777 qsub_commands_marcel_new_GDs.sh
+./qsub_commands_marcel_new_GDs.sh
+
+1622639
+...
+1625633
+
+cd crossing_min_random_drawing/
+zip -r community_new_GDs.zip community_new_GDs/
+cd ..
+scp crossing_min_random_drawing/community_new_GDs.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+
+All new gradient descent, Input 2017:
+
+mkdir input_angle_new_GDs_17
+cp input_angle_17/input*.txt input_angle_new_GDs_17/
+cp input_angle_17/run_neato* input_angle_new_GDs_17/
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/input.zip input_angle_new_GDs_17/
+cd input_angle_new_GDs_17/
+unzip input.zip
+4. cd ..
+python3 create_qsubs_new_GDs.py | create_qsub_variable_param(0, 16, 100, "input_angle_new_GDs_17", 'crossings_angle', 'log_files_new_GDs_17', 'crossings_angle_new_GDs.sh', 'crossings_angle_new_GDs_mem.sh', 30, 2, 100, 2)
+mkdir log_files_new_GDs_17
+./qsub_commands_new_GDs.sh
+
+zip -r input_angle_new_GDs_17.zip input_angle_new_GDs_17/*.npy
+scp input_angle_new_GDs_17.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+1622009.head1
+...
+1622418.head1
+
+
+All new gradient descent, north:
+
+mkdir crossing_min_random_drawing/north_new_GDs/
+cp crossing_min_random_drawing/north/*.txt crossing_min_random_drawing/north_new_GDs/
+cp crossing_min_random_drawing/north/run_neato* crossing_min_random_drawing/north_new_GDs/
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/sfdp_north.zip crossing_min_random_drawing/north_new_GDs/
+cd crossing_min_random_drawing/north_new_GDs/
+unzip sfdp_north.zip
+rm sfdp_north.zip
+cd ..
+cd ..
+Xcp main_jacob.py main_jacob_new_GDs.py
+Xscp main_jacob_angle_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xscp main_jacob_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xcp create_qsubs_marcel.py create_qsubs_marcel_new_GDs.py
+Xscp create_qsubs_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xscp create_qsubs_marcel_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+mkdir log_files_north_new_GDs
+python3 create_qsubs_marcel_new_GDs.py | create_qsub_variable_param(200, "crossing_min_random_drawing/north_new_GDs", 'edge_crossings', 'log_files_north_new_GDs', 'edge_crossings_marcel.sh', 'edge_crossings_marcel.sh', 30, 2, 100, 2)
+Xchmod 777 qsub_commands_marcel_new_GDs.sh
+./qsub_commands_marcel_new_GDs.sh
+
+cd crossing_min_random_drawing/
+zip -r north_new_GDs.zip north_new_GDs/
+rm -rf north_new_GDs/
+cd ..
+
+All new gradient descent, plantri:
+
+mkdir crossing_min_random_drawing/plantri_new_GDs/
+cp crossing_min_random_drawing/plantri/*.txt crossing_min_random_drawing/plantri_new_GDs/
+cp crossing_min_random_drawing/plantri/run_neato* crossing_min_random_drawing/plantri_new_GDs/
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/sfdp_plantri.zip crossing_min_random_drawing/plantri_new_GDs/
+cd crossing_min_random_drawing/plantri_new_GDs/
+unzip sfdp_plantri.zip
+rm sfdp_plantri.zip
+cd ..
+cd ..
+Xcp main_jacob.py main_jacob_new_GDs.py
+Xscp main_jacob_angle_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xscp main_jacob_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xcp create_qsubs_marcel.py create_qsubs_marcel_new_GDs.py
+Xscp create_qsubs_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xscp create_qsubs_marcel_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+mkdir log_files_plantri_new_GDs
+python3 create_qsubs_marcel_new_GDs.py | create_qsub_variable_param(200, "crossing_min_random_drawing/plantri_new_GDs", 'edge_crossings', 'log_files_plantri_new_GDs', 'edge_crossings_marcel.sh', 'edge_crossings_marcel.sh', 30, 2, 100, 2) 
+Xchmod 777 qsub_commands_marcel_new_GDs.sh
+./qsub_commands_marcel_new_GDs.sh
+
+cd crossing_min_random_drawing/
+zip -r plantri_new_GDs.zip plantri_new_GDs/
+rm -rf plantri_new_GDs/
+cd ..
+
+sanity check, k = 1 is enough:
+
+All new gradient descent, Input 2017:
+
+mkdir input_angle_sanity_k_17
+cp input_angle_17/input1.txt input_angle_sanity_k_17/
+cp input_angle_17/input2.txt input_angle_sanity_k_17/
+cp input_angle_17/input3.txt input_angle_sanity_k_17/
+cp input_angle_17/input4.txt input_angle_sanity_k_17/
+cp input_angle_17/input5.txt input_angle_sanity_k_17/
+cp input_angle_17/input6.txt input_angle_sanity_k_17/
+
+cp input_angle_17/run_neato_input1_* input_angle_sanity_k_17/
+cp input_angle_17/run_neato_input2_* input_angle_sanity_k_17/
+cp input_angle_17/run_neato_input3_* input_angle_sanity_k_17/
+cp input_angle_17/run_neato_input4_* input_angle_sanity_k_17/
+cp input_angle_17/run_neato_input5_* input_angle_sanity_k_17/
+cp input_angle_17/run_neato_input6_* input_angle_sanity_k_17/
+
+cp input_angle_new_GDs_17/run_sfdp_input1_* input_angle_sanity_k_17/
+cp input_angle_new_GDs_17/run_sfdp_input2_* input_angle_sanity_k_17/
+cp input_angle_new_GDs_17/run_sfdp_input3_* input_angle_sanity_k_17/
+cp input_angle_new_GDs_17/run_sfdp_input4_* input_angle_sanity_k_17/
+cp input_angle_new_GDs_17/run_sfdp_input5_* input_angle_sanity_k_17/
+cp input_angle_new_GDs_17/run_sfdp_input6_* input_angle_sanity_k_17/
+
+cp create_qsubs_new_GDs.py create_qsubs_sanity_k.py
+python3 create_qsubs_sanity_k.py | create_qsub_variable_param(0, 6, 100, "input_angle_sanity_k_17", 'crossings_angle', 'log_files_sanity_k_17', 'crossings_angle_sanity_k_17.sh', 'crossings_angle_new_GDs_mem.sh', 30, 2, 100, 2)
+mkdir log_files_sanity_k_17
+cp crossings_angle_new_GDs.sh crossings_angle_sanity_k.sh
+cp crossings_angle_new_GDs_mem.sh crossings_angle_sanity_k_mem.sh
+./qsub_commands_new_GDs.sh
+
+zip -r input_angle_sanity_k_17.zip input_angle_sanity_k_17/*.npy
+scp input_angle_sanity_k_17.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+All new gradient descent, Input 2018:
+
+mkdir input_angle_sanity_k
+cp input_angle/input1.txt input_angle_sanity_k/
+cp input_angle/input2.txt input_angle_sanity_k/
+cp input_angle/input3.txt input_angle_sanity_k/
+cp input_angle/input4.txt input_angle_sanity_k/
+cp input_angle/input5.txt input_angle_sanity_k/
+cp input_angle/input6.txt input_angle_sanity_k/
+cp input_angle/input7.txt input_angle_sanity_k/
+
+cp input_angle/run_neato_input1_* input_angle_sanity_k/
+cp input_angle/run_neato_input2_* input_angle_sanity_k/
+cp input_angle/run_neato_input3_* input_angle_sanity_k/
+cp input_angle/run_neato_input4_* input_angle_sanity_k/
+cp input_angle/run_neato_input5_* input_angle_sanity_k/
+cp input_angle/run_neato_input6_* input_angle_sanity_k/
+cp input_angle/run_neato_input7_* input_angle_sanity_k/
+
+cp input_angle_new_GDs/run_sfdp_input1_* input_angle_sanity_k/
+cp input_angle_new_GDs/run_sfdp_input2_* input_angle_sanity_k/
+cp input_angle_new_GDs/run_sfdp_input3_* input_angle_sanity_k/
+cp input_angle_new_GDs/run_sfdp_input4_* input_angle_sanity_k/
+cp input_angle_new_GDs/run_sfdp_input5_* input_angle_sanity_k/
+cp input_angle_new_GDs/run_sfdp_input6_* input_angle_sanity_k/
+cp input_angle_new_GDs/run_sfdp_input7_* input_angle_sanity_k/
+
+Xcp create_qsubs_new_GDs.py create_qsubs_sanity_k.py
+python3 create_qsubs_sanity_k.py | create_qsub_variable_param(0, 7, 100, "input_angle_sanity_k", 'crossings_angle', 'log_files_sanity_k', 'crossings_angle_sanity_k.sh', 'crossings_angle_new_GDs_mem.sh', 30, 2, 100, 2)
+mkdir log_files_sanity_k
+Xcp crossings_angle_new_GDs.sh crossings_angle_sanity_k.sh
+Xcp crossings_angle_new_GDs_mem.sh crossings_angle_sanity_k_mem.sh
+./qsub_commands_new_GDs.sh
+
+zip -r input_angle_sanity_k.zip input_angle_sanity_k/*.npy
+scp input_angle_sanity_k.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+-------------------------------------------------------------------------------------------------------------------
+
+freeing some disk storage:
+
+123296	./input_angle_new_GDs
+2520	./input_angle_sanity_k
+
+11896	./build/temp.linux-x86_64-3.5
+11896	./build
+16	./__pycache__
+
+329120	./input_angle_17
+
+-------------------------------------------------------------------------------------------------------------------
+
+graph 8-11, Input 2018:
+
+mkdir input_angle_mid_dense
+cp input_angle_new_GDs/input*.txt input_angle_mid_dense/
+cp input_angle_new_GDs/run_neato* input_angle_mid_dense/
+cp input_angle_new_GDs/run_sfdp* input_angle_mid_dense/
+cp create_qsubs_new_GDs.py create_qsubs_mid_dense.py
+vi create_qsubs_mid_dense.py
+python3 create_qsubs_mid_dense.py
+cp crossings_angle_sanity_k.sh crossings_angle_mid_dense.sh
+put log files in crossings_angle_mid_dense.sh
+./qsub_commands_new_GDs.sh
+
+zip -r input_angle_mid_dense.zip input_angle_mid_dense/*.npy
+scp input_angle_mid_dense.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+graph 7-14, 16, Input 2017:
+
+mkdir input_angle_mid_dense_17
+cp input_angle_new_GDs_17/input*.txt input_angle_mid_dense_17/
+cp input_angle_new_GDs_17/run_neato* input_angle_mid_dense_17/
+cp input_angle_new_GDs_17/run_sfdp* input_angle_mid_dense_17/
+Xcp create_qsubs_new_GDs.py create_qsubs_mid_dense.py
+vi create_qsubs_mid_dense.py
+python3 create_qsubs_mid_dense.py
+Xcp crossings_angle_sanity_k.sh crossings_angle_mid_dense.sh
+put log files in crossings_angle_mid_dense_17.sh
+./qsub_commands_new_GDs.sh
+    
+zip -r input_angle_mid_dense_17.zip input_angle_mid_dense_17/*.npy
+scp input_angle_mid_dense_17.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+-------------------------------------------------------------------------------------------------------------------
+
+PBS array, community:
+
+mkdir crossing_min_random_drawing/community_pbs_arr/
+cp crossing_min_random_drawing/community/*.txt crossing_min_random_drawing/community_pbs_arr/
+cp crossing_min_random_drawing/community/run_neato* crossing_min_random_drawing/community_pbs_arr/
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/sfdp_community.zip crossing_min_random_drawing/community_pbs_arr/
+cd crossing_min_random_drawing/community_pbs_arr/
+unzip sfdp_community.zip
+rm sfdp_community.zip
+cd ..
+cd ..
+Xcp main_jacob.py main_jacob_new_GDs.py
+Xscp main_jacob_angle_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xscp main_jacob_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+cp create_qsubs_marcel_new_GDs.py create_qsubs_marcel_pbs_arr.py
+Xscp create_qsubs_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xscp create_qsubs_marcel_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+mkdir log_files_community_pbs_arr
+python3 create_qsubs_marcel_pbs_arr.py
+mkdir log_files_community_pbs_arr
+cp crossings_angle_mid_dense_17.sh edge_crossings_marcel_pbs_arr.sh
+vi edge_crossings_marcel_pbs_arr.sh -> python3 run_with_param.py < log_files_community_pbs_arr/input_$PBS_ARRAY_INDEX.dat > log_files_community_pbs_arr/output_$PBS_ARRAY_INDEX.dat 2> log_files_community_pbs_arr/error_$PBS_ARRAY_INDEX.dat
+chmod 777 qsub_commands_marcel_new_GDs.sh
+./qsub_commands_marcel_new_GDs.sh
+
+qsub -J 1-1000 -N edge_crossings -o log_files_community_pbs_arr/edge_crossings.out -e log_files_community_pbs_arr/edge_crossings.err -V edge_crossings_marcel_pbs_arr.sh
+qsub -J 1001-2000 -N edge_crossings -o log_files_community_pbs_arr/edge_crossings.out -e log_files_community_pbs_arr/edge_crossings.err -V edge_crossings_marcel_pbs_arr.sh
+qsub -J 2001-3000 -N edge_crossings -o log_files_community_pbs_arr/edge_crossings.out -e log_files_community_pbs_arr/edge_crossings.err -V edge_crossings_marcel_pbs_arr.sh
+qsub -J 3001-4000 -N edge_crossings -o log_files_community_pbs_arr/edge_crossings.out -e log_files_community_pbs_arr/edge_crossings.err -V edge_crossings_marcel_pbs_arr.sh
+qsub -J 4001-5000 -N edge_crossings -o log_files_community_pbs_arr/edge_crossings.out -e log_files_community_pbs_arr/edge_crossings.err -V edge_crossings_marcel_pbs_arr.sh
+qsub -J 5001-6120 -N edge_crossings -o log_files_community_pbs_arr/edge_crossings.out -e log_files_community_pbs_arr/edge_crossings.err -V edge_crossings_marcel_pbs_arr.sh
+qsub -J 1-2250 -N edge_crossings -o log_files_community_pbs_arr/edge_crossings.out -e log_files_community_pbs_arr/edge_crossings.err -V edge_crossings_marcel_pbs_arr.sh
+
+cd crossing_min_random_drawing/
+zip -r community_pbs_arr.zip community_pbs_arr/
+rm -rf community_pbs_arr/
+cd ..
+
+mkdir crossing_min_random_drawing/community_pbs_arr/
+cp crossing_min_random_drawing/community/*.txt crossing_min_random_drawing/community_pbs_arr/
+cp crossing_min_random_drawing/community/run_neato* crossing_min_random_drawing/community_pbs_arr/
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/sfdp_community.zip crossing_min_random_drawing/community_pbs_arr/
+cd crossing_min_random_drawing/community_pbs_arr/
+unzip sfdp_community.zip
+rm sfdp_community.zip
+cd ..
+cd ..
+
+zip -r log_files_community_pbs_arr.zip log_files_community_pbs_arr/
+rm -rf log_files_community_pbs_arr/
+mkdir log_files_community_pbs_arr/
+python3 create_qsubs_marcel_pbs_arr.py | only for 5001-6120
+
+scp crossing_min_random_drawing/community_pbs_arr.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+
+PBS array, north:
+
+Remove the file completed array at create_qsubs_marcel_pbs_arr
+mkdir crossing_min_random_drawing/north_pbs_arr/
+cp crossing_min_random_drawing/north/*.txt crossing_min_random_drawing/north_pbs_arr/
+cp crossing_min_random_drawing/north/run_neato* crossing_min_random_drawing/north_pbs_arr/
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/sfdp_north.zip crossing_min_random_drawing/north_pbs_arr/
+cd crossing_min_random_drawing/north_pbs_arr/
+unzip sfdp_north.zip
+rm sfdp_north.zip
+cd ..
+cd ..
+Xcp main_jacob.py main_jacob_new_GDs.py
+Xscp main_jacob_angle_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xscp main_jacob_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xcp create_qsubs_marcel_new_GDs.py create_qsubs_marcel_pbs_arr.py
+Xscp create_qsubs_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xscp create_qsubs_marcel_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+mkdir log_files_north_pbs_arr
+python3 create_qsubs_marcel_pbs_arr.py
+cp crossings_angle_mid_dense_17.sh edge_crossings_marcel_pbs_arr.sh
+vi edge_crossings_marcel_pbs_arr.sh -> python3 run_with_param.py < log_files_north_pbs_arr/input_$PBS_ARRAY_INDEX.dat > log_files_north_pbs_arr/output_$PBS_ARRAY_INDEX.dat 2> log_files_north_pbs_arr/error_$PBS_ARRAY_INDEX.dat
+chmod 777 qsub_commands_marcel_new_GDs.sh
+./qsub_commands_marcel_new_GDs.sh
+
+qsub -J 1-2000 -N edge_crossings -o log_files_north_pbs_arr/edge_crossings.out -e log_files_north_pbs_arr/edge_crossings.err -V edge_crossings_marcel_pbs_arr.sh
+
+
+cd crossing_min_random_drawing/
+zip -r north_pbs_arr.zip north_pbs_arr/
+rm -rf north_pbs_arr/
+cd ..
+
+mkdir crossing_min_random_drawing/north_pbs_arr/
+cp crossing_min_random_drawing/north/*.txt crossing_min_random_drawing/north_pbs_arr/
+cp crossing_min_random_drawing/north/run_neato* crossing_min_random_drawing/north_pbs_arr/
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/sfdp_north.zip crossing_min_random_drawing/north_pbs_arr/
+cd crossing_min_random_drawing/north_pbs_arr/
+unzip sfdp_north.zip
+rm sfdp_north.zip
+cd ..
+cd ..
+
+zip -r log_files_north_pbs_arr.zip log_files_north_pbs_arr/
+rm -rf log_files_north_pbs_arr/
+mkdir log_files_north_pbs_arr/
+python3 create_qsubs_marcel_pbs_arr.py | only for 2001-4000, 4001-6000, 6001-8000, 8001-9000
+
+qsub -J 2001-4000 -N edge_crossings -o log_files_north_pbs_arr/edge_crossings.out -e log_files_north_pbs_arr/edge_crossings.err -V edge_crossings_marcel_pbs_arr.sh
+qsub -J 4001-6000 -N edge_crossings -o log_files_north_pbs_arr/edge_crossings.out -e log_files_north_pbs_arr/edge_crossings.err -V edge_crossings_marcel_pbs_arr.sh
+qsub -J 6001-8000 -N edge_crossings -o log_files_north_pbs_arr/edge_crossings.out -e log_files_north_pbs_arr/edge_crossings.err -V edge_crossings_marcel_pbs_arr.sh
+qsub -J 8001-9000 -N edge_crossings -o log_files_north_pbs_arr/edge_crossings.out -e log_files_north_pbs_arr/edge_crossings.err -V edge_crossings_marcel_pbs_arr.sh
+
+scp crossing_min_random_drawing/north_pbs_arr.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+
+
+PBS array, plantri:
+
+XRemove the file completed array at create_qsubs_marcel_pbs_arr
+mkdir crossing_min_random_drawing/plantri_pbs_arr/
+cp crossing_min_random_drawing/plantri/*.txt crossing_min_random_drawing/plantri_pbs_arr/
+cp crossing_min_random_drawing/plantri/run_neato* crossing_min_random_drawing/plantri_pbs_arr/
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/sfdp_plantri.zip crossing_min_random_drawing/plantri_pbs_arr/
+cd crossing_min_random_drawing/plantri_pbs_arr/
+unzip sfdp_plantri.zip
+rm sfdp_plantri.zip
+cd ..
+cd ..
+Xcp main_jacob.py main_jacob_new_GDs.py
+Xscp main_jacob_angle_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xscp main_jacob_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xcp create_qsubs_marcel_new_GDs.py create_qsubs_marcel_pbs_arr.py
+Xscp create_qsubs_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xscp create_qsubs_marcel_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+mkdir log_files_plantri_pbs_arr
+python3 create_qsubs_marcel_pbs_arr.py
+Xcp crossings_angle_mid_dense_17.sh edge_crossings_marcel_pbs_arr.sh
+vi edge_crossings_marcel_pbs_arr.sh -> python3 run_with_param.py < log_files_plantri_pbs_arr/input_$PBS_ARRAY_INDEX.dat > log_files_plantri_pbs_arr/output_$PBS_ARRAY_INDEX.dat 2> log_files_plantri_pbs_arr/error_$PBS_ARRAY_INDEX.dat
+chmod 777 qsub_commands_marcel_new_GDs.sh
+./qsub_commands_marcel_new_GDs.sh
+
+qsub -J 1-2000 -N edge_crossings -o log_files_plantri_pbs_arr/edge_crossings.out -e log_files_plantri_pbs_arr/edge_crossings.err -V edge_crossings_marcel_pbs_arr.sh
+
+
+cd crossing_min_random_drawing/
+zip -r plantri_pbs_arr.zip plantri_pbs_arr/
+rm -rf plantri_pbs_arr/
+cd ..
+
+mkdir crossing_min_random_drawing/plantri_pbs_arr/
+cp crossing_min_random_drawing/plantri/*.txt crossing_min_random_drawing/plantri_pbs_arr/
+cp crossing_min_random_drawing/plantri/run_neato* crossing_min_random_drawing/plantri_pbs_arr/
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/sfdp_plantri.zip crossing_min_random_drawing/plantri_pbs_arr/
+cd crossing_min_random_drawing/plantri_pbs_arr/
+unzip sfdp_plantri.zip
+rm sfdp_plantri.zip
+cd ..
+cd ..
+
+zip -r log_files_plantri_pbs_arr.zip log_files_plantri_pbs_arr/
+rm -rf log_files_plantri_pbs_arr/
+mkdir log_files_plantri_pbs_arr/
+python3 create_qsubs_marcel_pbs_arr.py | only for 2001-4000, 4001-6000, 6001-8000, 8001-9000
+
+qsub -J 2001-4000 -N edge_crossings -o log_files_plantri_pbs_arr/edge_crossings.out -e log_files_plantri_pbs_arr/edge_crossings.err -V edge_crossings_marcel_pbs_arr.sh
+qsub -J 4001-6000 -N edge_crossings -o log_files_plantri_pbs_arr/edge_crossings.out -e log_files_plantri_pbs_arr/edge_crossings.err -V edge_crossings_marcel_pbs_arr.sh
+qsub -J 5047-6000 -N edge_crossings -o log_files_plantri_pbs_arr/edge_crossings.out -e log_files_plantri_pbs_arr/edge_crossings.err -V edge_crossings_marcel_pbs_arr.sh
+qsub -J 6001-8000 -N edge_crossings -o log_files_plantri_pbs_arr/edge_crossings.out -e log_files_plantri_pbs_arr/edge_crossings.err -V edge_crossings_marcel_pbs_arr.sh
+qsub -J 8001-9000 -N edge_crossings -o log_files_plantri_pbs_arr/edge_crossings.out -e log_files_plantri_pbs_arr/edge_crossings.err -V edge_crossings_marcel_pbs_arr.sh
+
+scp crossing_min_random_drawing/plantri_pbs_arr.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+PBS array, rome:
+
+XRemove the file completed array at create_qsubs_marcel_pbs_arr
+mkdir crossing_min_random_drawing/rome_pbs_arr/
+cp crossing_min_random_drawing/rome/*.txt crossing_min_random_drawing/rome_pbs_arr/
+cp crossing_min_random_drawing/rome/run_neato* crossing_min_random_drawing/rome_pbs_arr/
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/sfdp_rome.zip crossing_min_random_drawing/rome_pbs_arr/
+cd crossing_min_random_drawing/rome_pbs_arr/
+unzip sfdp_rome.zip
+rm sfdp_rome.zip
+cd ..
+cd ..
+Xcp main_jacob.py main_jacob_new_GDs.py
+Xscp main_jacob_angle_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xscp main_jacob_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xcp create_qsubs_marcel_new_GDs.py create_qsubs_marcel_pbs_arr.py
+Xscp create_qsubs_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xscp create_qsubs_marcel_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+mkdir log_files_rome_pbs_arr
+python3 create_qsubs_marcel_pbs_arr.py
+Xcp crossings_angle_mid_dense_17.sh edge_crossings_marcel_pbs_arr.sh
+vi edge_crossings_marcel_pbs_arr.sh -> python3 run_with_param.py < log_files_rome_pbs_arr/input_$PBS_ARRAY_INDEX.dat > log_files_rome_pbs_arr/output_$PBS_ARRAY_INDEX.dat 2> log_files_rome_pbs_arr/error_$PBS_ARRAY_INDEX.dat
+chmod 777 qsub_commands_marcel_new_GDs.sh
+X./qsub_commands_marcel_new_GDs.sh
+
+qsub -J 1-2000 -N edge_crossings -o log_files_rome_pbs_arr/edge_crossings.out -e log_files_rome_pbs_arr/edge_crossings.err -V edge_crossings_marcel_pbs_arr.sh
+
+
+cd crossing_min_random_drawing/
+zip -r rome_pbs_arr.zip rome_pbs_arr/
+rm -rf rome_pbs_arr/
+cd ..
+
+mkdir crossing_min_random_drawing/rome_pbs_arr/
+cp crossing_min_random_drawing/rome/*.txt crossing_min_random_drawing/rome_pbs_arr/
+cp crossing_min_random_drawing/rome/run_neato* crossing_min_random_drawing/rome_pbs_arr/
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/sfdp_rome.zip crossing_min_random_drawing/rome_pbs_arr/
+cd crossing_min_random_drawing/rome_pbs_arr/
+unzip sfdp_rome.zip
+rm sfdp_rome.zip
+cd ..
+cd ..
+
+zip -r log_files_rome_pbs_arr.zip log_files_rome_pbs_arr/
+rm -rf log_files_rome_pbs_arr/
+mkdir log_files_rome_pbs_arr/
+
+Pbs array approach:
+
+python3 create_qsubs_marcel_pbs_arr.py | only for 2001-4000, 4001-6000, 6001-8000
+
+qsub -J 2001-4000 -N edge_crossings -o log_files_rome_pbs_arr/edge_crossings.out -e log_files_rome_pbs_arr/edge_crossings.err -V edge_crossings_marcel_pbs_arr.sh
+qsub -J 4001-6000 -N edge_crossings -o log_files_rome_pbs_arr/edge_crossings.out -e log_files_rome_pbs_arr/edge_crossings.err -V edge_crossings_marcel_pbs_arr.sh
+qsub -J 6001-8000 -N edge_crossings -o log_files_rome_pbs_arr/edge_crossings.out -e log_files_rome_pbs_arr/edge_crossings.err -V edge_crossings_marcel_pbs_arr.sh
+qsub -J 8001-9000 -N edge_crossings -o log_files_rome_pbs_arr/edge_crossings.out -e log_files_rome_pbs_arr/edge_crossings.err -V edge_crossings_marcel_pbs_arr.sh
+
+new for GNU parallel:
+
+python3 create_qsubs_marcel_pbs_arr.py | 8001-9000
+cp edge_crossings_marcel_pbs_arr.sh edge_crossings_marcel_gnu_par.sh
+vi edge_crossings_marcel_gnu_par.sh -> seq 8001-9000 | python3 run_with_param.py < log_files_rome_pbs_arr/input_{}.dat > log_files_rome_pbs_arr/output_{}.dat 2> log_files_rome_pbs_arr/error_{}.dat
+chmod 777 edge_crossings_marcel_gnu_par.sh
+./edge_crossings_marcel_gnu_par.sh
+
+qsub -N edge_crossings -o log_files_rome_pbs_arr/edge_crossings.out -e log_files_rome_pbs_arr/edge_crossings.err -V edge_crossings_marcel_gnu_par.sh
+qsub -N edge_crossings -o log_files_rome_pbs_arr/edge_crossings.out -e log_files_rome_pbs_arr/edge_crossings.err edge_crossings_marcel_gnu_par.sh
+
+scp crossing_min_random_drawing/rome_pbs_arr.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+
+cd crossing_min_random_drawing/
+unzip rome_pbs_arr.zip
+cd ..
+python3 check_marcel_new_GDs.py
+
+-------------------------------------------------------------------------------------------------------------------
+
+Vanilla, Input 2018:
+
+mkdir input_angle_sanity_vanilla
+cp input_angle_new_GDs/input1.txt input_angle_sanity_vanilla/
+cp input_angle_new_GDs/input2.txt input_angle_sanity_vanilla/
+cp input_angle_new_GDs/input3.txt input_angle_sanity_vanilla/
+cp input_angle_new_GDs/input4.txt input_angle_sanity_vanilla/
+cp input_angle_new_GDs/input5.txt input_angle_sanity_vanilla/
+cp input_angle_new_GDs/input6.txt input_angle_sanity_vanilla/
+cp input_angle_new_GDs/input7.txt input_angle_sanity_vanilla/
+
+cp input_angle_new_GDs/run_neato_input1_* input_angle_sanity_vanilla/
+cp input_angle_new_GDs/run_neato_input2_* input_angle_sanity_vanilla/
+cp input_angle_new_GDs/run_neato_input3_* input_angle_sanity_vanilla/
+cp input_angle_new_GDs/run_neato_input4_* input_angle_sanity_vanilla/
+cp input_angle_new_GDs/run_neato_input5_* input_angle_sanity_vanilla/
+cp input_angle_new_GDs/run_neato_input6_* input_angle_sanity_vanilla/
+cp input_angle_new_GDs/run_neato_input7_* input_angle_sanity_vanilla/
+
+cp input_angle_new_GDs/run_sfdp_input1_* input_angle_sanity_vanilla/
+cp input_angle_new_GDs/run_sfdp_input2_* input_angle_sanity_vanilla/
+cp input_angle_new_GDs/run_sfdp_input3_* input_angle_sanity_vanilla/
+cp input_angle_new_GDs/run_sfdp_input4_* input_angle_sanity_vanilla/
+cp input_angle_new_GDs/run_sfdp_input5_* input_angle_sanity_vanilla/
+cp input_angle_new_GDs/run_sfdp_input6_* input_angle_sanity_vanilla/
+cp input_angle_new_GDs/run_sfdp_input7_* input_angle_sanity_vanilla/
+
+cp create_qsubs_mid_dense.py create_qsubs_sanity_vanilla.py
+python3 create_qsubs_sanity_vanilla.py | create_qsub_variable_param(100, "input_angle_sanity_vanilla", 'crossings_angle', 'log_files_sanity_vanilla', 'crossings_angle_sanity_vanilla.sh', 'dummy', 30, 2, 100, 2) 
+mkdir log_files_sanity_vanilla
+cp crossings_angle_mid_dense.sh crossings_angle_sanity_vanilla.sh
+vi crossings_angle_sanity_vanilla.sh | log_files_sanity_vanilla
+Xcp crossings_angle_new_GDs_mem.sh crossings_angle_sanity_k_mem.sh
+./qsub_commands_new_GDs.sh
+
+zip -r input_angle_sanity_vanilla.zip input_angle_sanity_vanilla/*.npy
+scp input_angle_sanity_vanilla.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+zip -r input_angle_sanity_vanilla.zip input_angle_sanity_vanilla/
+rm -rf input_angle_sanity_vanilla/
+zip -r log_files_sanity_vanilla.zip log_files_sanity_vanilla/
+rm -rf log_files_sanity_vanilla/
+
+Vanilla and random, Input 2017:
+
+mkdir input_angle_sanity_vanilla_random_17
+cp input_angle_new_GDs_17/input1.txt input_angle_sanity_vanilla_random_17/
+cp input_angle_new_GDs_17/input2.txt input_angle_sanity_vanilla_random_17/
+cp input_angle_new_GDs_17/input3.txt input_angle_sanity_vanilla_random_17/
+cp input_angle_new_GDs_17/input4.txt input_angle_sanity_vanilla_random_17/
+cp input_angle_new_GDs_17/input5.txt input_angle_sanity_vanilla_random_17/
+cp input_angle_new_GDs_17/input6.txt input_angle_sanity_vanilla_random_17/
+
+cp create_qsubs_sanity_vanilla.py create_qsubs_sanity_vanilla_random.py
+python3 create_qsubs_sanity_vanilla_random.py | create_qsub_variable_param(100, "input_angle_sanity_vanilla_random_17", 'crossings_angle', 'log_files_sanity_vanilla_random_17', 'crossings_angle_sanity_vanilla_random_17.sh', 'dummy', 30, 2, 100, 2) 
+mkdir log_files_sanity_vanilla_random_17
+cp crossings_angle_sanity_vanilla.sh crossings_angle_sanity_vanilla_random_17.sh
+vi crossings_angle_sanity_vanilla_random_17.sh | log_files_sanity_vanilla_random_17
+Xcp crossings_angle_new_GDs_mem.sh crossings_angle_sanity_k_mem.sh
+./qsub_commands_new_GDs.sh
+
+qsub -J 1-30 -N crossings_angle -o log_files_sanity_vanilla_random_17/crossings_angle.out -e log_files_sanity_vanilla_random_17/crossings_angle.err -V crossings_angle_sanity_vanilla_random_17.sh
+
+zip -r input_angle_sanity_vanilla_random_17.zip input_angle_sanity_vanilla_random_17/*.npy
+scp input_angle_sanity_vanilla_random_17.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+zip -r input_angle_sanity_vanilla_random_17.zip input_angle_sanity_vanilla_random_17/
+rm -rf input_angle_sanity_vanilla_random_17/
+zip -r log_files_sanity_vanilla_random_17.zip log_files_sanity_vanilla_random_17/
+rm -rf log_files_sanity_vanilla_random_17/
+-------------------------------------------------------------------------------------------------------------------
+
+finding inconsistency:
+
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/main_angles_v1_without_mp_with_adam_fixed_opt_iters.py ./
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/main_angles_v1_without_mp_with_adam_fixed_opt_iters_P3.py ./
+
+python3 -m venv myenv_edgecross
+source myenv_edgecross/bin/activate
+
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/neato_layout_input1_2017.npy ./
+-------------------------------------------------------------------------------------------------------------------
+
+graph 13, Input 2018:
+
+mkdir input_angle_13_18
+cp input_angle_new_GDs/input13.txt input_angle_13_18/
+cp input_angle_new_GDs/run_neato_input13_* input_angle_13_18/
+cp input_angle_new_GDs/run_sfdp_input13_* input_angle_13_18/
+cp create_qsubs_new_GDs.py create_qsubs_13_18.py
+vi create_qsubs_13_18.py
+python3 create_qsubs_13_18.py
+cp main_jacob_angle_new_GDs.py main_jacob_angle_store_all_X.py
+cp crossings_angle_sanity_k.sh crossings_angle_store_X_mem.sh
+put log files in crossings_angle_store_X_mem.sh
+./qsub_commands_new_GDs.sh
+
+zip -r input_angle_13_18.zip input_angle_13_18/*.npy
+scp input_angle_13_18.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+cp crossings_angle_best_10_18.sh crossings_angle_best_13_18.sh
+qsub -N compute_best -o log_files_13_18/compute_best.out -e log_files_13_18/compute_best.err -V crossings_angle_best_13_18.sh
+
+zip -r input_angle_13_18.zip input_angle_13_18/
+rm -rf input_angle_13_18/
+
+zip -r log_files_13_18.zip log_files_13_18/
+rm -rf log_files_13_18/
+
+
+-------------------------------------------------------------------------------------------------------------------
+
+graph 10, Input 2018:
+
+mkdir input_angle_10_18
+cp input_angle_new_GDs/input10.txt input_angle_10_18/
+cp input_angle_new_GDs/run_neato_input10_* input_angle_10_18/
+cp input_angle_new_GDs/run_sfdp_input10_* input_angle_10_18/
+cp create_qsubs_13_18.py create_qsubs_10_18.py
+vi create_qsubs_10_18.py
+python3 create_qsubs_10_18.py
+Xcp main_jacob_angle_new_GDs.py main_jacob_angle_store_all_X.py
+cp crossings_angle_store_X_mem.sh crossings_angle_10_18.sh
+put log files in crossings_angle_10_18.sh
+./qsub_commands_new_GDs.sh
+    
+Xzip -r input_angle_10_18.zip input_angle_10_18/*.npy
+Xscp input_angle_10_18.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+cp crossings_angle_10_18.sh crossings_angle_best_10_18.sh
+python3 check_store_X.py 10 input_angle_10_18 3 100 101 5
+qsub -N compute_best -o log_files_10_18/compute_best.out -e log_files_10_18/compute_best.err -V crossings_angle_best_10_18.sh
+
+python3 read_log_and_find_best.py
+
+zip -r input_angle_10_18.zip input_angle_10_18/
+rm -rf input_angle_10_18/
+
+zip -r log_files_10_18.zip log_files_10_18/
+rm -rf log_files_10_18/
+
+-------------------------------------------------------------------------------------------------------------------
+
+send code to sabin:
+
+zip -r hpc_run.zip input_angle_new_GDs/input*.txt input_angle_new_GDs/run_neato_input* input_angle_new_GDs/run_sfdp_input* input_angle_new_GDs_17/input*.txt input_angle_new_GDs_17/run_neato_input* input_angle_new_GDs_17/run_sfdp_input* create_qsubs_10_18.py main_jacob_angle_store_all_X.py crossings_angle_10_18.sh
+
+zip -r hpc_run2.zip run_with_param.py check_store_X.py log_files_new_GDs/crossings_angle_input14_W_1_NORM_0_K_1_2_STRAT_VANILLA_neato_0.out
+scp hpc_run2.zip abureyanahmed@oxford.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+-------------------------------------------------------------------------------------------------------------------
+
+graph 12, Input 2018:
+
+mkdir input_angle_12_18
+cp input_angle_new_GDs/input12.txt input_angle_12_18/
+cp input_angle_new_GDs/run_neato_input12_* input_angle_12_18/
+cp input_angle_new_GDs/run_sfdp_input12_* input_angle_12_18/
+cp create_qsubs_10_18.py create_qsubs_12_18.py
+vi create_qsubs_12_18.py
+python3 create_qsubs_12_18.py
+Xcp main_jacob_angle_new_GDs.py main_jacob_angle_store_all_X.py
+cp crossings_angle_10_18.sh crossings_angle_12_18.sh
+put log files in crossings_angle_12_18.sh
+./qsub_commands_new_GDs.sh
+         
+Xzip -r input_angle_10_18.zip input_angle_10_18/*.npy
+Xscp input_angle_10_18.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+        
+cp crossings_angle_best_10_18.sh crossings_angle_best_12_18.sh
+python3 check_store_X.py 12 input_angle_12_18 1 10 11 3
+qsub -N compute_best -o log_files_12_18/compute_best.out -e log_files_12_18/compute_best.err -V crossings_angle_best_12_18.sh
+
+python3 read_log_and_find_best.py
+
+zip -r input_angle_12_18.zip input_angle_12_18/
+rm -rf input_angle_12_18/
+
+zip -r log_files_12_18.zip log_files_12_18/
+rm -rf log_files_12_18/
+
+graph 14, Input 2018:
+
+mkdir input_angle_14_18
+cp input_angle_new_GDs/input14.txt input_angle_14_18/
+cp input_angle_new_GDs/run_neato_input14_* input_angle_14_18/
+cp input_angle_new_GDs/run_sfdp_input14_* input_angle_14_18/
+cp create_qsubs_10_18.py create_qsubs_14_18.py
+vi create_qsubs_14_18.py
+python3 create_qsubs_14_18.py
+Xcp main_jacob_angle_new_GDs.py main_jacob_angle_store_all_X.py
+cp crossings_angle_10_18.sh crossings_angle_14_18.sh
+put log files in crossings_angle_14_18.sh
+./qsub_commands_new_GDs.sh
+
+Xzip -r input_angle_10_18.zip input_angle_10_18/*.npy 
+Xscp input_angle_10_18.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+         
+cp crossings_angle_best_10_18.sh crossings_angle_best_14_18.sh
+python3 check_store_X.py 14 input_angle_14_18 1 12 13 3
+qsub -N compute_best -o log_files_14_18/compute_best.out -e log_files_14_18/compute_best.err -V crossings_angle_best_14_18.sh
+
+python3 read_log_and_find_best.py
+
+zip -r input_angle_14_18.zip input_angle_14_18/
+rm -rf input_angle_14_18/
+
+zip -r log_files_14_18.zip log_files_14_18/
+rm -rf log_files_14_18/
+
+-------------------------------------------------------------------------------------------------------------------
+
+bin sampling, graph 10, Input 2018:
+
+mkdir input_angle_10_18_sampling
+cp input_angle_new_GDs/input10.txt input_angle_10_18_sampling/
+cp input_angle_new_GDs/run_neato_input10_* input_angle_10_18_sampling/
+cp input_angle_new_GDs/run_sfdp_input10_* input_angle_10_18_sampling/
+cp create_qsubs_10_18.py create_qsubs_10_18_sampling.py
+vi create_qsubs_10_18_sampling.py
+python3 create_qsubs_10_18_sampling.py
+cp main_jacob_angle_store_all_X.py main_jacob_angle_sampling.py
+cp crossings_angle_10_18.sh crossings_angle_10_18_sampling.sh
+put log files in crossings_angle_10_18_sampling.sh
+./qsub_commands_new_GDs.sh
+
+Xzip -r input_angle_10_18.zip input_angle_10_18/*.npy
+Xscp input_angle_10_18.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+cp crossings_angle_best_10_18.sh crossings_angle_best_10_18_sampling.sh
+python3 check_store_X.py 10 input_angle_10_18_sampling 10 50 51 4
+qsub -N compute_best -o log_files_10_18_sampling/compute_best.out -e log_files_10_18_sampling/compute_best.err -V crossings_angle_best_10_18_sampling.sh
+
+python3 read_log_and_find_best.py
+
+zip -r input_angle_10_18_sampling.zip input_angle_10_18_sampling/
+rm -rf input_angle_10_18_sampling/
+
+-------------------------------------------------------------------------------------------------------------------
+
+shabbeer's algorithm:
+
+community:
+
+mkdir crossing_min_random_drawing/community_shabbeer/
+cp crossing_min_random_drawing/community/*.txt crossing_min_random_drawing/community_shabbeer/
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/community_mds.zip crossing_min_random_drawing/community_shabbeer/
+cd crossing_min_random_drawing/community_shabbeer/
+unzip community_mds.zip
+rm community_mds.zip
+cd ..
+cd ..
+Xcp main_jacob_new_GDs.py main_jacob_shabbeer.py
+cp create_qsubs_marcel_pbs_arr.py create_qsubs_marcel_shabbeer.py
+mkdir log_files_community_shabbeer
+Xcp edge_crossings_marcel_pbs_arr.sh edge_crossings_marcel_shabbeer.sh
+python3 create_qsubs_marcel_shabbeer.py
+vi edge_crossings_marcel_shabbeer.sh -> python3 run_with_param.py < log_files_community_shabbeer/input_$PBS_ARRAY_INDEX.dat > log_files_community_shabbeer/output_$PBS_ARRAY_INDEX.dat 2> log_files_community_shabbeer/error_$PBS_ARRAY_INDEX.dat
+Xchmod 777 qsub_commands_marcel_new_GDs.sh
+X./qsub_commands_marcel_new_GDs.sh
+
+qsub -J 1-600 -N edge_crossings -o log_files_community_shabbeer/edge_crossings.out -e log_files_community_shabbeer/edge_crossings.err -V edge_crossings_marcel_shabbeer.sh
+
+cd crossing_min_random_drawing/
+zip -r community_shabbeer.zip community_shabbeer/
+rm -rf community_shabbeer/
+cd ..
+
+scp crossing_min_random_drawing/community_shabbeer.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+zip -r log_files_community_shabbeer.zip log_files_community_shabbeer/
+rm -rf log_files_community_shabbeer/
+
+north:
+
+mkdir crossing_min_random_drawing/north_shabbeer/
+cp crossing_min_random_drawing/north/*.txt crossing_min_random_drawing/north_shabbeer/
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/north_mds.zip crossing_min_random_drawing/north_shabbeer/
+cd crossing_min_random_drawing/north_shabbeer/
+unzip north_mds.zip
+rm north_mds.zip
+cd ..
+cd ..
+Xcp main_jacob_new_GDs.py main_jacob_shabbeer.py
+Xcp create_qsubs_marcel_pbs_arr.py create_qsubs_marcel_shabbeer.py
+mkdir log_files_north_shabbeer
+Xcp edge_crossings_marcel_pbs_arr.sh edge_crossings_marcel_shabbeer.sh
+change parameters in create_qsubs_marcel_shabbeer.py
+python3 create_qsubs_marcel_shabbeer.py
+vi edge_crossings_marcel_shabbeer.sh -> python3 run_with_param.py < log_files_north_shabbeer/input_$PBS_ARRAY_INDEX.dat > log_files_north_shabbeer/output_$PBS_ARRAY_INDEX.dat 2> log_files_north_shabbeer/error_$PBS_ARRAY_INDEX.dat
+Xchmod 777 qsub_commands_marcel_new_GDs.sh
+X./qsub_commands_marcel_new_GDs.sh
+
+qsub -J 1-600 -N edge_crossings -o log_files_north_shabbeer/edge_crossings.out -e log_files_north_shabbeer/edge_crossings.err -V edge_crossings_marcel_shabbeer.sh
+
+cd crossing_min_random_drawing/
+zip -r north_shabbeer.zip north_shabbeer/
+rm -rf north_shabbeer/
+cd ..
+
+scp crossing_min_random_drawing/north_shabbeer.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+zip -r log_files_north_shabbeer.zip log_files_north_shabbeer/
+rm -rf log_files_north_shabbeer/
+
+plantri:
+
+mkdir crossing_min_random_drawing/plantri_shabbeer/
+cp crossing_min_random_drawing/plantri/*.txt crossing_min_random_drawing/plantri_shabbeer/
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/plantri_mds.zip crossing_min_random_drawing/plantri_shabbeer/
+cd crossing_min_random_drawing/plantri_shabbeer/
+unzip plantri_mds.zip
+rm plantri_mds.zip
+cd ..
+cd ..
+Xcp main_jacob_new_GDs.py main_jacob_shabbeer.py
+Xcp create_qsubs_marcel_pbs_arr.py create_qsubs_marcel_shabbeer.py
+mkdir log_files_plantri_shabbeer
+Xcp edge_crossings_marcel_pbs_arr.sh edge_crossings_marcel_shabbeer.sh
+change parameters in create_qsubs_marcel_shabbeer.py
+python3 create_qsubs_marcel_shabbeer.py
+vi edge_crossings_marcel_shabbeer.sh -> python3 run_with_param.py < log_files_plantri_shabbeer/input_$PBS_ARRAY_INDEX.dat > log_files_plantri_shabbeer/output_$PBS_ARRAY_INDEX.dat 2> log_files_plantri_shabbeer/error_$PBS_ARRAY_INDEX.dat
+Xchmod 777 qsub_commands_marcel_new_GDs.sh
+X./qsub_commands_marcel_new_GDs.sh
+
+qsub -J 1-600 -N edge_crossings -o log_files_plantri_shabbeer/edge_crossings.out -e log_files_plantri_shabbeer/edge_crossings.err -V edge_crossings_marcel_shabbeer.sh
+
+cd crossing_min_random_drawing/
+zip -r plantri_shabbeer.zip plantri_shabbeer/
+rm -rf plantri_shabbeer/
+cd ..
+
+scp crossing_min_random_drawing/plantri_shabbeer.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+zip -r log_files_plantri_shabbeer.zip log_files_plantri_shabbeer/
+rm -rf log_files_plantri_shabbeer/
+
+rome:
+
+mkdir crossing_min_random_drawing/rome_shabbeer/
+cp crossing_min_random_drawing/rome/*.txt crossing_min_random_drawing/rome_shabbeer/
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/rome_mds.zip crossing_min_random_drawing/rome_shabbeer/
+cd crossing_min_random_drawing/rome_shabbeer/
+unzip rome_mds.zip
+rm rome_mds.zip
+cd ..
+cd ..
+Xcp main_jacob_new_GDs.py main_jacob_shabbeer.py
+Xcp create_qsubs_marcel_pbs_arr.py create_qsubs_marcel_shabbeer.py
+mkdir log_files_rome_shabbeer
+Xcp edge_crossings_marcel_pbs_arr.sh edge_crossings_marcel_shabbeer.sh
+change parameters in create_qsubs_marcel_shabbeer.py
+python3 create_qsubs_marcel_shabbeer.py
+vi edge_crossings_marcel_shabbeer.sh -> python3 run_with_param.py < log_files_rome_shabbeer/input_$PBS_ARRAY_INDEX.dat > log_files_rome_shabbeer/output_$PBS_ARRAY_INDEX.dat 2> log_files_rome_shabbeer/error_$PBS_ARRAY_INDEX.dat
+Xchmod 777 qsub_commands_marcel_new_GDs.sh
+X./qsub_commands_marcel_new_GDs.sh
+
+qsub -J 1-600 -N edge_crossings -o log_files_rome_shabbeer/edge_crossings.out -e log_files_rome_shabbeer/edge_crossings.err -V edge_crossings_marcel_shabbeer.sh
+
+cd crossing_min_random_drawing/
+zip -r rome_shabbeer.zip rome_shabbeer/
+Xrm -rf rome_shabbeer/
+cd ..
+    
+scp crossing_min_random_drawing/rome_shabbeer.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+zip -r log_files_rome_shabbeer.zip log_files_rome_shabbeer/
+rm -rf log_files_rome_shabbeer/
+-------------------------------------------------------------------------------------------------------------------
+
+K -> 2^5 - 2^10
+
+create qsubs:
+create_qsubs_new_GDs.py
+create_qsubs_sanity_vanilla.py
+create_qsubs_13_18.py
+
+Grad descent file:
+main_jacob_angle_new_GDs.py
+main_jacob_angle_store_all_X.py
+
+Small, Input 2018:
+
+mkdir input_angle_large_k
+cp input_angle_new_GDs/input1.txt input_angle_large_k/
+cp input_angle_new_GDs/input2.txt input_angle_large_k/
+cp input_angle_new_GDs/input3.txt input_angle_large_k/
+cp input_angle_new_GDs/input4.txt input_angle_large_k/
+cp input_angle_new_GDs/input5.txt input_angle_large_k/
+cp input_angle_new_GDs/input6.txt input_angle_large_k/
+cp input_angle_new_GDs/input7.txt input_angle_large_k/
+
+cp input_angle_new_GDs/run_neato_input1_* input_angle_large_k/
+cp input_angle_new_GDs/run_neato_input2_* input_angle_large_k/
+cp input_angle_new_GDs/run_neato_input3_* input_angle_large_k/
+cp input_angle_new_GDs/run_neato_input4_* input_angle_large_k/
+cp input_angle_new_GDs/run_neato_input5_* input_angle_large_k/
+cp input_angle_new_GDs/run_neato_input6_* input_angle_large_k/
+cp input_angle_new_GDs/run_neato_input7_* input_angle_large_k/
+
+cp input_angle_new_GDs/run_sfdp_input1_* input_angle_large_k/
+cp input_angle_new_GDs/run_sfdp_input2_* input_angle_large_k/
+cp input_angle_new_GDs/run_sfdp_input3_* input_angle_large_k/
+cp input_angle_new_GDs/run_sfdp_input4_* input_angle_large_k/
+cp input_angle_new_GDs/run_sfdp_input5_* input_angle_large_k/
+cp input_angle_new_GDs/run_sfdp_input6_* input_angle_large_k/
+cp input_angle_new_GDs/run_sfdp_input7_* input_angle_large_k/
+
+cp create_qsubs_sanity_vanilla.py create_qsubs_large_k.py
+python3 create_qsubs_large_k.py | create_qsub_variable_param(100, "input_angle_large_k", 'crossings_angle', 'log_files_large_k', 'crossings_angle_large_k.sh', 'dummy', 30, 2, 100, 2)
+mkdir log_files_large_k
+cp crossings_angle_sanity_vanilla.sh crossings_angle_large_k.sh
+vi crossings_angle_large_k.sh | log_files_large_k
+Xcp crossings_angle_new_GDs_mem.sh crossings_angle_sanity_k_mem.sh
+./qsub_commands_new_GDs.sh
+
+zip -r input_angle_large_k.zip input_angle_large_k/*.npy
+scp input_angle_large_k.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+zip -r input_angle_large_k.zip input_angle_large_k/
+rm -rf input_angle_large_k/
+zip -r log_files_large_k.zip log_files_large_k/
+rm -rf log_files_large_k/
+
+Small, Input 2017:
+
+mkdir input_angle_large_k_17
+cp input_angle_new_GDs_17/input1.txt input_angle_large_k_17/
+cp input_angle_new_GDs_17/input2.txt input_angle_large_k_17/
+cp input_angle_new_GDs_17/input3.txt input_angle_large_k_17/
+cp input_angle_new_GDs_17/input4.txt input_angle_large_k_17/
+cp input_angle_new_GDs_17/input5.txt input_angle_large_k_17/
+cp input_angle_new_GDs_17/input6.txt input_angle_large_k_17/
+
+cp input_angle_new_GDs_17/run_neato_input1_* input_angle_large_k_17/
+cp input_angle_new_GDs_17/run_neato_input2_* input_angle_large_k_17/
+cp input_angle_new_GDs_17/run_neato_input3_* input_angle_large_k_17/
+cp input_angle_new_GDs_17/run_neato_input4_* input_angle_large_k_17/
+cp input_angle_new_GDs_17/run_neato_input5_* input_angle_large_k_17/
+cp input_angle_new_GDs_17/run_neato_input6_* input_angle_large_k_17/
+
+cp input_angle_new_GDs_17/run_sfdp_input1_* input_angle_large_k_17/
+cp input_angle_new_GDs_17/run_sfdp_input2_* input_angle_large_k_17/
+cp input_angle_new_GDs_17/run_sfdp_input3_* input_angle_large_k_17/
+cp input_angle_new_GDs_17/run_sfdp_input4_* input_angle_large_k_17/
+cp input_angle_new_GDs_17/run_sfdp_input5_* input_angle_large_k_17/
+cp input_angle_new_GDs_17/run_sfdp_input6_* input_angle_large_k_17/
+
+cp create_qsubs_large_k.py create_qsubs_large_k_17.py
+python3 create_qsubs_large_k_17.py | create_qsub_variable_param(100, "input_angle_large_k_17", 'crossings_angle', 'log_files_large_k_17', 'crossings_angle_large_k_17.sh', 'dummy', 30, 2, 100, 2)
+mkdir log_files_large_k_17
+cp crossings_angle_large_k.sh crossings_angle_large_k_17.sh
+vi crossings_angle_large_k_17.sh | log_files_large_k_17
+Xcp crossings_angle_new_GDs_mem.sh crossings_angle_sanity_k_mem.sh
+./qsub_commands_new_GDs.sh
+
+qsub -J 1-30 -N crossings_angle -o log_files_sanity_vanilla_random_17/crossings_angle.out -e log_files_sanity_vanilla_random_17/crossings_angle.err -V crossings_angle_sanity_vanilla_random_17.sh
+
+zip -r input_angle_large_k_17.zip input_angle_large_k_17/*.npy
+scp input_angle_large_k_17.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+zip -r input_angle_large_k_17.zip input_angle_large_k_17/
+rm -rf input_angle_large_k_17/
+zip -r log_files_large_k_17.zip log_files_large_k_17/
+rm -rf log_files_large_k_17/
+-------------------------------------------------------------------------------------------------------------------
+Different stat for community graphs using both crossing minimization and angle maximization:
+
+Write a code to copy some files?
+Bad idea
+We already do it in mds
+in main_jacob handle mds
+['maxDeg5nodeDegreeExp-2.000000minCommunitySize2maxCommunitySize10communitySizeExp-1.000000avGDegree3iteration100graph', 'maxDeg5nodeDegreeExp-2.000000minCommunitySize2maxCommunitySize10communitySizeExp-1.000000avGDegree3iteration10graph', 'maxDeg5nodeDegreeExp-2.000000minCommunitySize2maxCommunitySize10communitySizeExp-1.000000avGDegree3iteration11graph', 'maxDeg5nodeDegreeExp-2.000000minCommunitySize2maxCommunitySize10communitySizeExp-1.000000avGDegree3iteration12graph', 'maxDeg5nodeDegreeExp-2.000000minCommunitySize2maxCommunitySize10communitySizeExp-1.000000avGDegree3iteration13graph']
+in all grad_desc check the crossing (crossing and angle) and store the best one
+Store best X -> not a good idea because grad desc should do it automatically
+
+main_jacob_angle_new_GDs.py
+main_jacob_new_GDs.py
+main_jacob_angle_sampling.py
+
+Community, crossing:
+
+Remove the file completed array at create_qsubs_marcel_pbs_arr
+mkdir crossing_min_random_drawing/community_crossing/
+cp crossing_min_random_drawing/community/*.txt crossing_min_random_drawing/community_crossing/
+cp crossing_min_random_drawing/community/run_neato* crossing_min_random_drawing/community_crossing/
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/sfdp_community.zip crossing_min_random_drawing/community_crossing/
+cd crossing_min_random_drawing/community_crossing/
+unzip sfdp_community.zip
+rm sfdp_community.zip
+cd ..
+cd ..
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/community_mds.zip crossing_min_random_drawing/community_crossing/
+cd crossing_min_random_drawing/community_crossing/
+unzip community_mds.zip
+rm community_mds.zip
+cd ..
+cd ..
+cp main_jacob_new_GDs.py main_jacob_multiple_layout_formats.py
+scp main_jacob_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+scp main_jacob_shabbeer.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xcp create_qsubs_marcel_new_GDs.py create_qsubs_marcel_pbs_arr.py
+Xscp create_qsubs_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xscp create_qsubs_marcel_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+mkdir log_files_community_crossing
+python3 create_qsubs_community_crossing.py
+cp edge_crossings_marcel_pbs_arr.sh edge_crossings_community_crossing.sh
+vi edge_crossings_community_crossing.sh -> python3 run_with_param.py < log_files_community_crossing/input_$PBS_ARRAY_INDEX.dat > log_files_community_crossing/output_$PBS_ARRAY_INDEX.dat 2> log_files_community_crossing/error_$PBS_ARRAY_INDEX.dat
+chmod 777 qsub_commands_marcel_new_GDs.sh
+./qsub_commands_marcel_new_GDs.sh
+
+qsub -J 1-2 -N edge_crossings -o log_files_community_crossing/edge_crossings.out -e log_files_community_crossing/edge_crossings.err -V edge_crossings_community_crossing.sh
+qsub -J 3-600 -N edge_crossings -o log_files_community_crossing/edge_crossings.out -e log_files_community_crossing/edge_crossings.err -V edge_crossings_community_crossing.sh
+
+cd crossing_min_random_drawing/
+zip -r community_crossing.zip community_crossing/
+rm -rf community_crossing/
+cd ..
+
+zip -r log_files_community_crossing.zip log_files_community_crossing/
+rm -rf log_files_community_crossing/
+
+scp crossing_min_random_drawing/community_crossing.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+Community, angle:
+
+Remove the file completed array at create_qsubs_marcel_pbs_arr
+mkdir crossing_min_random_drawing/community_angle/
+cp crossing_min_random_drawing/community/*.txt crossing_min_random_drawing/community_angle/
+cp crossing_min_random_drawing/community/run_neato* crossing_min_random_drawing/community_angle/
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/sfdp_community.zip crossing_min_random_drawing/community_angle/
+cd crossing_min_random_drawing/community_angle/
+unzip sfdp_community.zip
+rm sfdp_community.zip
+cd ..
+cd ..
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/community_mds.zip crossing_min_random_drawing/community_angle/
+cd crossing_min_random_drawing/community_angle/
+unzip community_mds.zip
+rm community_mds.zip
+cd ..
+cd ..
+cp main_jacob_angle_new_GDs.py main_jacob_angle_multiple_layout_formats.py
+scp main_jacob_angle_multiple_layout_formats.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+scp main_jacob_multiple_layout_formats.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+cp create_qsubs_community_crossing.py create_qsubs_community_angle.py
+Xscp create_qsubs_community_crossing.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xscp create_qsubs_community_angle.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+mkdir log_files_community_angle
+python3 create_qsubs_community_angle.py
+Xcp edge_crossings_marcel_pbs_arr.sh edge_crossings_community_crossing.sh
+vi edge_crossings_community_crossing.sh -> python3 run_with_param.py < log_files_community_angle/input_$PBS_ARRAY_INDEX.dat > log_files_community_angle/output_$PBS_ARRAY_INDEX.dat 2> log_files_community_angle/error_$PBS_ARRAY_INDEX.dat
+chmod 777 qsub_commands_marcel_new_GDs.sh
+./qsub_commands_marcel_new_GDs.sh
+
+qsub -J 1-2 -N edge_angle -o log_files_community_angle/edge_angle.out -e log_files_community_angle/edge_angle.err -V edge_crossings_community_crossing.sh
+qsub -J 3-600 -N edge_angle -o log_files_community_angle/edge_angle.out -e log_files_community_angle/edge_angle.err -V edge_crossings_community_crossing.sh
+
+cd crossing_min_random_drawing/
+zip -r community_angle.zip community_angle/
+rm -rf community_angle/
+cd ..
+
+zip -r log_files_community_angle.zip log_files_community_angle/
+rm -rf log_files_community_angle/
+
+scp crossing_min_random_drawing/community_angle.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+-------------------------------------------------------------------------------------------------------------------
+5 neato, 5 sfdp, 5 random, mds, k 2^-5 to 2^10:
+
+Small, Input 2018:
+
+mkdir input_angle_more_layouts
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/input_txt.zip input_angle_more_layouts/
+cd input_angle_more_layouts/
+unzip input_txt.zip
+cd ..
+
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/layouts.zip input_angle_more_layouts/
+cd input_angle_more_layouts/
+unzip layouts.zip
+cd ..
+
+cp create_qsubs_large_k.py create_qsubs_more_layouts.py
+scp create_qsubs_more_layouts.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+scp create_qsubs_community_angle.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+mkdir log_files_more_layouts
+python3 create_qsubs_more_layouts.py | create_qsub_variable_param(100, "input_angle_more_layouts", 'crossings_angle', 'log_files_more_layouts', 'crossings_angle_more_layouts.sh', 'dummy', 30, 2, 100, 2)
+cp crossings_angle_large_k.sh crossings_angle_more_layouts.sh
+vi crossings_angle_more_layouts.sh | log_files_more_layouts
+Xcp crossings_angle_new_GDs_mem.sh crossings_angle_sanity_k_mem.sh
+./qsub_commands_new_GDs.sh
+
+qsub -J 1-2 -N crossings_angle -o log_files_more_layouts/crossings_angle.out -e log_files_more_layouts/crossings_angle.err -V crossings_angle_more_layouts.sh
+qsub -J 3-672 -N crossings_angle -o log_files_more_layouts/crossings_angle.out -e log_files_more_layouts/crossings_angle.err -V crossings_angle_more_layouts.sh
+
+zip -r input_angle_more_layouts.zip input_angle_more_layouts/*.npy
+scp input_angle_more_layouts.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+zip -r input_angle_more_layouts.zip input_angle_more_layouts/
+rm -rf input_angle_more_layouts/
+zip -r log_files_more_layouts.zip log_files_more_layouts/
+rm -rf log_files_more_layouts/
+
+Small, Input 2017:
+
+mkdir input_angle_more_layouts_17
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/layouts.zip input_angle_more_layouts_17/
+cd input_angle_more_layouts_17/
+unzip layouts.zip
+cd ..
+
+Xcp create_qsubs_large_k.py create_qsubs_more_layouts.py
+Xscp create_qsubs_more_layouts.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xscp create_qsubs_community_angle.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+mkdir log_files_more_layouts_17
+python3 create_qsubs_more_layouts.py | create_qsub_variable_param(100, "input_angle_more_layouts_17", 'crossings_angle', 'log_files_more_layouts_17', 'crossings_angle_more_layouts.sh', 'dummy', 30, 2, 100, 2) and file_names = ["input1", "input2", "input3", "input4", "input5", "input6"]
+Xcp crossings_angle_large_k.sh crossings_angle_more_layouts.sh
+vi crossings_angle_more_layouts.sh | log_files_more_layouts_17
+Xcp crossings_angle_new_GDs_mem.sh crossings_angle_sanity_k_mem.sh
+./qsub_commands_new_GDs.sh
+          
+qsub -J 1-2 -N crossings_angle -o log_files_more_layouts_17/crossings_angle.out -e log_files_more_layouts_17/crossings_angle.err -V crossings_angle_more_layouts.sh
+qsub -J 3-576 -N crossings_angle -o log_files_more_layouts_17/crossings_angle.out -e log_files_more_layouts_17/crossings_angle.err -V crossings_angle_more_layouts.sh        
+
+debug.sh->        
+zip -r input_angle_more_layouts_17.zip input_angle_more_layouts_17/*.npy
+scp input_angle_more_layouts_17.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+      
+zip -r input_angle_more_layouts_17.zip input_angle_more_layouts_17/
+rm -rf input_angle_more_layouts_17/
+zip -r log_files_more_layouts_17.zip log_files_more_layouts_17/
+rm -rf log_files_more_layouts_17/
+-------------------------------------------------------------------------------------------------------------------
+Different stat for community graphs using both crossing minimization and angle maximization:
+
+['maxDeg5nodeDegreeExp-2.000000minCommunitySize2maxCommunitySize10communitySizeExp-1.000000avGDegree3iteration14graph', 'maxDeg5nodeDegreeExp-2.000000minCommunitySize2maxCommunitySize10communitySizeExp-1.000000avGDegree3iteration15graph', 'maxDeg5nodeDegreeExp-2.000000minCommunitySize2maxCommunitySize10communitySizeExp-1.000000avGDegree3iteration16graph', 'maxDeg5nodeDegreeExp-2.000000minCommunitySize2maxCommunitySize10communitySizeExp-1.000000avGDegree3iteration17graph', 'maxDeg5nodeDegreeExp-2.000000minCommunitySize2maxCommunitySize10communitySizeExp-1.000000avGDegree3iteration18graph']
+
+Community, crossing:
+
+Remove the file completed array at create_qsubs_marcel_pbs_arr
+mkdir crossing_min_random_drawing/community_crossing_2/
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/layouts.zip crossing_min_random_drawing/community_crossing_2/
+cd crossing_min_random_drawing/community_crossing_2/
+unzip layouts.zip
+rm layouts.zip
+cd ..
+cd ..
+Xcp main_jacob_new_GDs.py main_jacob_multiple_layout_formats.py
+scp main_jacob_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+scp main_jacob_shabbeer.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+cp create_qsubs_community_crossing.py create_qsubs_crossing_one_mds.py
+Xscp create_qsubs_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xscp create_qsubs_marcel_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+mkdir log_files_community_crossing_2
+debug.sh -> python3 create_qsubs_crossing_one_mds.py
+qsub -N create_qsub -o create_qsub.out -e create_qsub.err -V debug.sh
+Xcp edge_crossings_marcel_pbs_arr.sh edge_crossings_community_crossing.sh
+vi edge_crossings_community_crossing.sh -> python3 run_with_param.py < log_files_community_crossing_2/input_$PBS_ARRAY_INDEX.dat > log_files_community_crossing_2/output_$PBS_ARRAY_INDEX.dat 2> log_files_community_crossing_2/error_$PBS_ARRAY_INDEX.dat
+chmod 777 qsub_commands_marcel_new_GDs.sh
+./qsub_commands_marcel_new_GDs.sh
+
+qsub -J 1-2 -N edge_crossings -o log_files_community_crossing_2/edge_crossings.out -e log_files_community_crossing_2/edge_crossings.err -V edge_crossings_community_crossing.sh
+qsub -J 3-480 -N edge_crossings -o log_files_community_crossing_2/edge_crossings.out -e log_files_community_crossing_2/edge_crossings.err -V edge_crossings_community_crossing.sh
+
+
+cd crossing_min_random_drawing/
+zip -r community_crossing_2.zip community_crossing_2/
+rm -rf community_crossing_2/
+cd ..
+
+zip -r log_files_community_crossing_2.zip log_files_community_crossing_2/
+rm -rf log_files_community_crossing_2/
+
+scp crossing_min_random_drawing/community_crossing_2.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+Community, angle:
+
+Remove the file completed array at create_qsubs_marcel_pbs_arr
+mkdir crossing_min_random_drawing/community_angle_2/
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/layouts.zip crossing_min_random_drawing/community_angle_2/
+cd crossing_min_random_drawing/community_angle_2/
+unzip layouts.zip
+rm layouts.zip
+cd ..
+cd ..
+Xcp main_jacob_angle_new_GDs.py main_jacob_angle_multiple_layout_formats.py
+scp main_jacob_angle_multiple_layout_formats.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+scp main_jacob_multiple_layout_formats.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+cp create_qsubs_community_angle.py create_qsubs_angle_one_mds.py
+Xscp create_qsubs_community_crossing.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xscp create_qsubs_community_angle.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+mkdir log_files_community_angle_2
+debug.sh -> python3 create_qsubs_angle_one_mds.py
+qsub -N create_qsub -o create_qsub.out -e create_qsub.err -V debug.sh
+Xcp edge_crossings_marcel_pbs_arr.sh edge_crossings_community_crossing.sh
+vi edge_crossings_community_crossing.sh -> python3 run_with_param.py < log_files_community_angle_2/input_$PBS_ARRAY_INDEX.dat > log_files_community_angle_2/output_$PBS_ARRAY_INDEX.dat 2> log_files_community_angle_2/error_$PBS_ARRAY_INDEX.dat
+chmod 777 qsub_commands_marcel_new_GDs.sh
+./qsub_commands_marcel_new_GDs.sh
+
+qsub -J 1-2 -N edge_angle -o log_files_community_angle_2/edge_angle.out -e log_files_community_angle_2/edge_angle.err -V edge_crossings_community_crossing.sh
+qsub -J 3-480 -N edge_angle -o log_files_community_angle_2/edge_angle.out -e log_files_community_angle_2/edge_angle.err -V edge_crossings_community_crossing.sh
+
+cd crossing_min_random_drawing/
+zip -r community_angle_2.zip community_angle_2/
+rm -rf community_angle_2/
+cd ..
+
+zip -r log_files_community_angle_2.zip log_files_community_angle_2/
+rm -rf log_files_community_angle_2/
+
+scp crossing_min_random_drawing/community_angle_2.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+-------------------------------------------------------------------------------------------------------------------
+Stress majorization:
+
+cp main_jacob_angle_multiple_layout_formats.py main_angle_stress_maj.py
+cp main_jacob_multiple_layout_formats.py main_stress_maj.py
+
+python3 main_angle_stress_maj.py input_angle_more_layouts input1 1 2 1 2 run_neato_input1_0.dot 2 0 test_stress_maj VANILLA 1e-3 2
+vi input_angle_more_layouts/input1_ncr_test_stress_maj.npy
+python3 main_stress_maj.py input_angle_more_layouts input1 1 2 1 2 run_neato_input1_0.dot 2 0 test_stress_maj VANILLA 1e-3 2
+-------------------------------------------------------------------------------------------------------------------
+stress majorization:
+
+Small, Input 2018:
+
+mkdir input_angle_stress_maj
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/layouts.zip input_angle_stress_maj/
+cd input_angle_stress_maj/
+unzip layouts.zip
+cd ..
+
+cp create_qsubs_more_layouts.py create_qsubs_stress_maj.py
+Xscp create_qsubs_more_layouts.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xscp create_qsubs_community_angle.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+mkdir log_files_stress_maj
+python3 create_qsubs_stress_maj.py | create_qsub_variable_param(100, "input_angle_stress_maj", 'crossings_angle', 'log_files_stress_maj', 'crossings_angle_more_layouts.sh', 'dummy', 30, 2, 100, 2)
+Xcp crossings_angle_large_k.sh crossings_angle_more_layouts.sh
+vi crossings_angle_more_layouts.sh | log_files_stress_maj
+Xcp crossings_angle_new_GDs_mem.sh crossings_angle_sanity_k_mem.sh
+./qsub_commands_new_GDs.sh
+
+qsub -J 1-2 -N crossings_angle -o log_files_stress_maj/crossings_angle.out -e log_files_stress_maj/crossings_angle.err -V crossings_angle_more_layouts.sh
+qsub -J 3-576 -N crossings_angle -o log_files_stress_maj/crossings_angle.out -e log_files_stress_maj/crossings_angle.err -V crossings_angle_more_layouts.sh
+qsub -J 577-672 -N crossings_angle -o log_files_stress_maj/crossings_angle.out -e log_files_stress_maj/crossings_angle.err -V crossings_angle_more_layouts.sh
+
+zip -r input_angle_stress_maj.zip input_angle_stress_maj/*.npy
+scp input_angle_stress_maj.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+zip -r input_angle_stress_maj.zip input_angle_stress_maj/
+rm -rf input_angle_stress_maj/
+zip -r log_files_stress_maj.zip log_files_stress_maj/
+rm -rf log_files_stress_maj/
+
+Time:
+
+vi log_files_more_layouts/output_1.dat
+vi log_files_stress_maj/output_1.dat
+vi log_files_more_layouts/output_97.dat
+vi log_files_stress_maj/output_97.dat
+vi log_files_more_layouts/output_193.dat
+vi log_files_stress_maj/output_193.dat
+vi log_files_more_layouts/output_289.dat
+vi log_files_stress_maj/output_289.dat
+vi log_files_more_layouts/output_385.dat
+vi log_files_stress_maj/output_385.dat
+vi log_files_more_layouts/output_481.dat
+vi log_files_stress_maj/output_481.dat
+vi log_files_more_layouts/output_577.dat
+vi log_files_stress_maj/output_577.dat
+
+Large, Input 2018:
+
+mkdir input_angle_stress_maj_large
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/layouts.zip input_angle_stress_maj_large/
+cd input_angle_stress_maj_large/
+unzip layouts.zip
+cd ..
+
+Xcp create_qsubs_more_layouts.py create_qsubs_stress_maj.py
+Xscp create_qsubs_more_layouts.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xscp create_qsubs_community_angle.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+mkdir log_files_stress_maj_large
+python3 create_qsubs_stress_maj.py | input files, input folder, log folder 
+Xcp crossings_angle_large_k.sh crossings_angle_more_layouts.sh
+vi crossings_angle_more_layouts.sh | log_files_stress_maj_large
+Xcp crossings_angle_new_GDs_mem.sh crossings_angle_sanity_k_mem.sh
+./qsub_commands_new_GDs.sh
+
+one drawing from each, 10 outer iter, 40 inner:
+
+qsub -J 1-2 -N crossings_angle -o log_files_stress_maj_large/crossings_angle.out -e log_files_stress_maj_large/crossings_angle.err -V crossings_angle_new_GDs_mem.sh
+qsub -J 3-48 -N crossings_angle -o log_files_stress_maj_large/crossings_angle.out -e log_files_stress_maj_large/crossings_angle.err -V crossings_angle_new_GDs_mem.sh
+
+Two drawings from each, 15 outer iter, 50 inner:
+
+qsub -J 43-44 -N crossings_angle -o log_files_stress_maj_large/crossings_angle.out -e log_files_stress_maj_large/crossings_angle.err -V crossings_angle_new_GDs_mem.sh
+qsub -J 45-84 -N crossings_angle -o log_files_stress_maj_large/crossings_angle.out -e log_files_stress_maj_large/crossings_angle.err -V crossings_angle_new_GDs_mem.sh
+
+
+zip -r input_angle_stress_maj_large.zip input_angle_stress_maj_large/*.npy
+scp input_angle_stress_maj_large.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+zip -r input_angle_stress_maj_large.zip input_angle_stress_maj_large/
+rm -rf input_angle_stress_maj_large/
+zip -r log_files_stress_maj_large.zip log_files_stress_maj_large/
+rm -rf log_files_stress_maj_large/
+-------------------------------------------------------------------------------------------------------------------
+sampling, take 10% of edge pairs:
+
+cp main_angle_stress_maj.py main_angle_bin_sampling.py
+python3 main_angle_bin_sampling.py input_angle_bin_sampling input1 1 2 1 2 run_neato_input1_0.dot 2 0 test_stress_maj VANILLA 1e-3 2 5
+
+Input 2018:
+
+mkdir input_angle_bin_sampling
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/layouts.zip input_angle_bin_sampling/
+cd input_angle_bin_sampling/
+unzip layouts.zip
+cd ..
+
+cp create_qsubs_stress_maj.py create_qsubs_bin_sampling.py
+Xscp create_qsubs_more_layouts.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xscp create_qsubs_community_angle.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+mkdir log_files_bin_sampling
+python3 create_qsubs_bin_sampling.py | create_qsub_variable_param(100, "input_angle_bin_sampling", 'crossings_angle', 'log_files_bin_sampling', 'crossings_angle_more_layouts.sh', 'dummy', 30, 2, 100, 2)
+cp run_with_param.py run_with_param_bin_sampling.py
+Xcp crossings_angle_large_k.sh crossings_angle_more_layouts.sh
+Xvi crossings_angle_more_layouts.sh | log_files_stress_maj
+Xcp crossings_angle_new_GDs_mem.sh crossings_angle_sanity_k_mem.sh
+./qsub_commands_new_GDs.sh
+
+export LOG_FOLDER=log_files_bin_sampling
+export RUN_WITH_PARAM=run_with_param_bin_sampling.py
+
+Xqsub -J 1-2 -N crossings_angle -o log_files_bin_sampling/crossings_angle.out -e log_files_bin_sampling/crossings_angle.err -V debug.sh
+Xqsub -J 1-2 -N crossings_angle -o log_files_bin_sampling/crossings_angle.out -e log_files_bin_sampling/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 3-96 -N crossings_angle -o log_files_bin_sampling/crossings_angle.out -e log_files_bin_sampling/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 97-192 -N crossings_angle -o log_files_bin_sampling/crossings_angle.out -e log_files_bin_sampling/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 193-288 -N crossings_angle -o log_files_bin_sampling/crossings_angle.out -e log_files_bin_sampling/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 289-384 -N crossings_angle -o log_files_bin_sampling/crossings_angle.out -e log_files_bin_sampling/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 385-480 -N crossings_angle -o log_files_bin_sampling/crossings_angle.out -e log_files_bin_sampling/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 481-576 -N crossings_angle -o log_files_bin_sampling/crossings_angle.out -e log_files_bin_sampling/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 577-672 -N crossings_angle -o log_files_bin_sampling/crossings_angle.out -e log_files_bin_sampling/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 673-768 -N crossings_angle -o log_files_bin_sampling/crossings_angle.out -e log_files_bin_sampling/crossings_angle.err -V crossings_angle_new_GDs_mem.sh
+Xqsub -J 769-864 -N crossings_angle -o log_files_bin_sampling/crossings_angle.out -e log_files_bin_sampling/crossings_angle.err -V crossings_angle_new_GDs_mem.sh
+
+
+zip -r input_angle_bin_sampling.zip input_angle_bin_sampling/*.npy
+scp input_angle_bin_sampling.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+zip -r input_angle_bin_sampling.zip input_angle_bin_sampling/
+rm -rf input_angle_bin_sampling/
+zip -r log_files_bin_sampling.zip log_files_bin_sampling/
+rm -rf log_files_bin_sampling/
+-------------------------------------------------------------------------------------------------------------------
+sampling, take 10% of edge crossings:
+
+cp main_angle_bin_sampling.py main_angle_bin_sampling_on_crossings.py
+python3 main_angle_bin_sampling_on_crossings.py input_angle_bin_sampling_on_crossings input1 1 2 1 2 run_neato_input1_0.dot 2 0 test_stress_maj VANILLA 1e-3 2 5
+
+Input 2018:
+
+mkdir input_angle_bin_sampling_on_crossings
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/layouts.zip input_angle_bin_sampling_on_crossings/
+cd input_angle_bin_sampling_on_crossings/
+unzip layouts.zip
+cd ..
+
+Xcp create_qsubs_stress_maj.py create_qsubs_bin_sampling.py
+Xscp create_qsubs_more_layouts.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xscp create_qsubs_community_angle.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+mkdir log_files_bin_sampling_on_crossings
+python3 create_qsubs_bin_sampling.py | create_qsub_variable_param(100, "input_angle_bin_sampling", 'crossings_angle', 'log_files_bin_sampling', 'crossings_angle_more_layouts.sh', 'dummy', 30, 2, 100, 2)
+Xcp run_with_param.py run_with_param_bin_sampling.py
+Xcp crossings_angle_large_k.sh crossings_angle_more_layouts.sh
+Xvi crossings_angle_more_layouts.sh | log_files_stress_maj
+Xcp crossings_angle_new_GDs_mem.sh crossings_angle_sanity_k_mem.sh
+./qsub_commands_new_GDs.sh
+
+export LOG_FOLDER=log_files_bin_sampling_on_crossings
+export RUN_WITH_PARAM=run_with_param_bin_sampling.py
+
+Xqsub -J 1-96 -N crossings_angle -o log_files_bin_sampling_on_crossings/crossings_angle.out -e log_files_bin_sampling_on_crossings/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 97-192 -N crossings_angle -o log_files_bin_sampling_on_crossings/crossings_angle.out -e log_files_bin_sampling_on_crossings/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 193-288 -N crossings_angle -o log_files_bin_sampling_on_crossings/crossings_angle.out -e log_files_bin_sampling_on_crossings/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 289-384 -N crossings_angle -o log_files_bin_sampling_on_crossings/crossings_angle.out -e log_files_bin_sampling_on_crossings/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 385-480 -N crossings_angle -o log_files_bin_sampling_on_crossings/crossings_angle.out -e log_files_bin_sampling_on_crossings/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 481-576 -N crossings_angle -o log_files_bin_sampling_on_crossings/crossings_angle.out -e log_files_bin_sampling_on_crossings/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 577-672 -N crossings_angle -o log_files_bin_sampling_on_crossings/crossings_angle.out -e log_files_bin_sampling_on_crossings/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 673-768 -N crossings_angle -o log_files_bin_sampling_on_crossings/crossings_angle.out -e log_files_bin_sampling_on_crossings/crossings_angle.err -V crossings_angle_new_GDs_mem.sh
+Xqsub -J 769-864 -N crossings_angle -o log_files_bin_sampling_on_crossings/crossings_angle.out -e log_files_bin_sampling_on_crossings/crossings_angle.err -V crossings_angle_new_GDs_mem.sh
+
+zip -r input_angle_bin_sampling_on_crossings.zip input_angle_bin_sampling_on_crossings/*.npy
+scp input_angle_bin_sampling_on_crossings.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+zip -r input_angle_bin_sampling_on_crossings.zip input_angle_bin_sampling_on_crossings/ 
+rm -rf input_angle_bin_sampling_on_crossings/ 
+zip -r log_files_bin_sampling_on_crossings.zip log_files_bin_sampling_on_crossings/
+rm -rf log_files_bin_sampling_on_crossings/ 
+-------------------------------------------------------------------------------------------------------------------
+thresholding angle:
+
+cp main_angle_bin_sampling.py main_angle_thresholding_angle.py
+python3 main_angle_thresholding_angle.py input_angle_thresholding_angle input1 1 2 1 2 run_neato_input1_0.dot 2 0 test_stress_maj VANILLA 1e-3 2 5
+
+Input 2018:
+
+mkdir input_angle_thresholding_angle
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/layouts.zip input_angle_thresholding_angle/
+cd input_angle_thresholding_angle/
+unzip layouts.zip
+cd ..
+
+cp create_qsubs_bin_sampling.py create_qsubs_thresholding_angle.py
+Xscp create_qsubs_more_layouts.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xscp create_qsubs_community_angle.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+mkdir log_files_thresholding_angle
+python3 create_qsubs_thresholding_angle.py | create_qsub_variable_param(100, "input_angle_bin_sampling", 'crossings_angle', 'log_files_bin_sampling', 'crossings_angle_more_layouts.sh', 'dummy', 30, 2, 100, 2)
+Xcp run_with_param.py run_with_param_bin_sampling.py
+Xcp crossings_angle_large_k.sh crossings_angle_more_layouts.sh
+Xvi crossings_angle_more_layouts.sh | log_files_stress_maj
+Xcp crossings_angle_new_GDs_mem.sh crossings_angle_sanity_k_mem.sh
+./qsub_commands_new_GDs.sh
+
+export LOG_FOLDER=log_files_thresholding_angle
+export RUN_WITH_PARAM=run_with_param_bin_sampling.py
+
+Xqsub -J 1-2 -N crossings_angle -o log_files_thresholding_angle/crossings_angle.out -e log_files_thresholding_angle/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 3-96 -N crossings_angle -o log_files_thresholding_angle/crossings_angle.out -e log_files_thresholding_angle/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 97-192 -N crossings_angle -o log_files_thresholding_angle/crossings_angle.out -e log_files_thresholding_angle/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 193-288 -N crossings_angle -o log_files_thresholding_angle/crossings_angle.out -e log_files_thresholding_angle/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 289-384 -N crossings_angle -o log_files_thresholding_angle/crossings_angle.out -e log_files_thresholding_angle/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 385-480 -N crossings_angle -o log_files_thresholding_angle/crossings_angle.out -e log_files_thresholding_angle/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 481-576 -N crossings_angle -o log_files_thresholding_angle/crossings_angle.out -e log_files_thresholding_angle/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 577-672 -N crossings_angle -o log_files_thresholding_angle/crossings_angle.out -e log_files_thresholding_angle/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 673-768 -N crossings_angle -o log_files_thresholding_angle/crossings_angle.out -e log_files_thresholding_angle/crossings_angle.err -V crossings_angle_new_GDs_mem.sh
+Xqsub -J 769-864 -N crossings_angle -o log_files_thresholding_angle/crossings_angle.out -e log_files_thresholding_angle/crossings_angle.err -V crossings_angle_new_GDs_mem.sh
+
+zip -r input_angle_thresholding_angle.zip input_angle_thresholding_angle/*.npy
+scp input_angle_thresholding_angle.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+zip -r input_angle_thresholding_angle.zip input_angle_thresholding_angle/
+rm -rf input_angle_thresholding_angle/
+zip -r log_files_thresholding_angle.zip log_files_thresholding_angle/
+rm -rf log_files_thresholding_angle/
+-------------------------------------------------------------------------------------------------------------------
+binned sampling, take 5% of total edge pairs:
+
+cp main_angle_bin_sampling.py main_angle_binned_sampling.py
+python3 main_angle_binned_sampling.py input_angle_thresholding_angle input1 1 2 1 2 run_neato_input1_0.dot 2 0 test_stress_maj VANILLA 1e-3 2 5
+
+Input 2018:
+
+mkdir input_angle_binned_sampling
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/layouts.zip input_angle_binned_sampling/
+cd input_angle_binned_sampling/
+unzip layouts.zip
+cd ..
+
+cp create_qsubs_bin_sampling.py create_qsubs_binned_sampling.py
+Xscp create_qsubs_more_layouts.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xscp create_qsubs_community_angle.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+mkdir log_files_binned_sampling
+python3 create_qsubs_binned_sampling.py | create_qsub_variable_param(100, "input_angle_bin_sampling", 'crossings_angle', 'log_files_bin_sampling', 'crossings_angle_more_layouts.sh', 'dummy', 30, 2, 100, 2)
+Xcp run_with_param.py run_with_param_bin_sampling.py
+Xcp crossings_angle_large_k.sh crossings_angle_more_layouts.sh
+Xvi crossings_angle_more_layouts.sh | log_files_stress_maj
+Xcp crossings_angle_new_GDs_mem.sh crossings_angle_sanity_k_mem.sh
+./qsub_commands_new_GDs.sh
+
+export LOG_FOLDER=log_files_binned_sampling
+export RUN_WITH_PARAM=run_with_param_bin_sampling.py
+
+Xqsub -J 1-2 -N crossings_angle -o log_files_binned_sampling/crossings_angle.out -e log_files_binned_sampling/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 3-96 -N crossings_angle -o log_files_binned_sampling/crossings_angle.out -e log_files_binned_sampling/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 97-192 -N crossings_angle -o log_files_binned_sampling/crossings_angle.out -e log_files_binned_sampling/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 193-288 -N crossings_angle -o log_files_binned_sampling/crossings_angle.out -e log_files_binned_sampling/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 289-384 -N crossings_angle -o log_files_binned_sampling/crossings_angle.out -e log_files_binned_sampling/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 385-480 -N crossings_angle -o log_files_binned_sampling/crossings_angle.out -e log_files_binned_sampling/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 481-576 -N crossings_angle -o log_files_binned_sampling/crossings_angle.out -e log_files_binned_sampling/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 577-672 -N crossings_angle -o log_files_binned_sampling/crossings_angle.out -e log_files_binned_sampling/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 673-768 -N crossings_angle -o log_files_binned_sampling/crossings_angle.out -e log_files_binned_sampling/crossings_angle.err -V crossings_angle_new_GDs_mem.sh
+Xqsub -J 769-864 -N crossings_angle -o log_files_binned_sampling/crossings_angle.out -e log_files_binned_sampling/crossings_angle.err -V crossings_angle_new_GDs_mem.sh
+
+zip -r input_angle_binned_sampling.zip input_angle_binned_sampling/*.npy
+scp input_angle_binned_sampling.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+      
+zip -r input_angle_binned_sampling.zip input_angle_binned_sampling/
+rm -rf input_angle_binned_sampling/
+zip -r log_files_binned_sampling.zip log_files_binned_sampling/
+rm -rf log_files_binned_sampling/
+-------------------------------------------------------------------------------------------------------------------
+cos theta sampling, POW is the param:
+
+cp main_angle_bin_sampling.py main_angle_cos_theta.py
+python3 main_angle_cos_theta.py input_angle_cos_theta input1 1 2 1 2 run_neato_input1_0.dot 2 0 test_stress_maj VANILLA 1e-3 2 5
+
+Input 2018:
+
+mkdir input_angle_cos_theta
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/layouts.zip input_angle_cos_theta/
+cd input_angle_cos_theta/
+unzip layouts.zip
+cd ..
+
+cp create_qsubs_bin_sampling.py create_qsubs_cos_theta.py
+Xscp create_qsubs_more_layouts.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xscp create_qsubs_community_angle.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+mkdir log_files_cos_theta
+python3 create_qsubs_cos_theta.py | create_qsub_variable_param(100, "input_angle_bin_sampling", 'crossings_angle', 'log_files_bin_sampling', 'crossings_angle_more_layouts.sh', 'dummy', 30, 2, 100, 2)
+Xcp run_with_param.py run_with_param_bin_sampling.py
+Xcp crossings_angle_large_k.sh crossings_angle_more_layouts.sh
+Xvi crossings_angle_more_layouts.sh | log_files_stress_maj
+Xcp crossings_angle_new_GDs_mem.sh crossings_angle_sanity_k_mem.sh
+./qsub_commands_new_GDs.sh
+
+export LOG_FOLDER=log_files_cos_theta
+export RUN_WITH_PARAM=run_with_param_bin_sampling.py
+
+Xqsub -J 1-2 -N crossings_angle -o log_files_cos_theta/crossings_angle.out -e log_files_cos_theta/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 3-96 -N crossings_angle -o log_files_cos_theta/crossings_angle.out -e log_files_cos_theta/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 97-192 -N crossings_angle -o log_files_cos_theta/crossings_angle.out -e log_files_cos_theta/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 193-288 -N crossings_angle -o log_files_cos_theta/crossings_angle.out -e log_files_cos_theta/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 289-384 -N crossings_angle -o log_files_cos_theta/crossings_angle.out -e log_files_cos_theta/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 385-480 -N crossings_angle -o log_files_cos_theta/crossings_angle.out -e log_files_cos_theta/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 481-576 -N crossings_angle -o log_files_cos_theta/crossings_angle.out -e log_files_cos_theta/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 577-672 -N crossings_angle -o log_files_cos_theta/crossings_angle.out -e log_files_cos_theta/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 673-768 -N crossings_angle -o log_files_cos_theta/crossings_angle.out -e log_files_cos_theta/crossings_angle.err -V crossings_angle_new_GDs_mem.sh
+Xqsub -J 769-864 -N crossings_angle -o log_files_cos_theta/crossings_angle.out -e log_files_cos_theta/crossings_angle.err -V crossings_angle_new_GDs_mem.sh
+
+zip -r input_angle_cos_theta.zip input_angle_cos_theta/*.npy
+scp input_angle_cos_theta.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+zip -r input_angle_cos_theta.zip input_angle_cos_theta/
+rm -rf input_angle_cos_theta/
+zip -r log_files_cos_theta.zip log_files_cos_theta/
+rm -rf log_files_cos_theta/
+-------------------------------------------------------------------------------------------------------------------
+Shabeers variable k:
+
+cp main_angle_stress_maj.py main_angle_variable_k.py
+python3 main_angle_variable_k.py input_angle_bin_sampling input1 1 2 1 2 run_neato_input1_0.dot 2 0 test_stress_maj VANILLA 1e-3 2
+
+cp main_stress_maj.py main_variable_k.py
+python3 main_variable_k.py input_angle_bin_sampling input1 1 2 1 2 run_neato_input1_0.dot 2 0 test_stress_maj VANILLA 1e-3 2
+
+Input 2018:
+
+mkdir input_angle_variable_k
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/layouts.zip input_angle_variable_k/
+cd input_angle_variable_k/
+unzip layouts.zip
+cd ..
+
+cp create_qsubs_cos_theta.py create_qsubs_variable_k.py
+Xscp create_qsubs_more_layouts.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xscp create_qsubs_community_angle.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+mkdir log_files_variable_k
+python3 create_qsubs_variable_k.py | create_qsub_variable_param(100, "input_angle_bin_sampling", 'crossings_angle', 'log_files_bin_sampling', 'crossings_angle_more_layouts.sh', 'dummy', 30, 2, 100, 2)
+cp run_with_param.py run_with_param_bin_sampling.py
+Xcp crossings_angle_large_k.sh crossings_angle_more_layouts.sh
+Xvi crossings_angle_more_layouts.sh | log_files_stress_maj
+Xcp crossings_angle_new_GDs_mem.sh crossings_angle_sanity_k_mem.sh
+./qsub_commands_new_GDs.sh
+
+export LOG_FOLDER=log_files_variable_k
+export RUN_WITH_PARAM=run_with_param.py
+
+Xqsub -J 1-2 -N crossings_angle -o log_files_variable_k/crossings_angle.out -e log_files_variable_k/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 3-96 -N crossings_angle -o log_files_variable_k/crossings_angle.out -e log_files_variable_k/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 97-192 -N crossings_angle -o log_files_variable_k/crossings_angle.out -e log_files_variable_k/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 193-288 -N crossings_angle -o log_files_variable_k/crossings_angle.out -e log_files_variable_k/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 289-384 -N crossings_angle -o log_files_variable_k/crossings_angle.out -e log_files_variable_k/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 385-480 -N crossings_angle -o log_files_variable_k/crossings_angle.out -e log_files_variable_k/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 481-576 -N crossings_angle -o log_files_variable_k/crossings_angle.out -e log_files_variable_k/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 577-672 -N crossings_angle -o log_files_variable_k/crossings_angle.out -e log_files_variable_k/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 673-768 -N crossings_angle -o log_files_variable_k/crossings_angle.out -e log_files_variable_k/crossings_angle.err -V crossings_angle_new_GDs_mem.sh
+Xqsub -J 769-864 -N crossings_angle -o log_files_variable_k/crossings_angle.out -e log_files_variable_k/crossings_angle.err -V crossings_angle_new_GDs_mem.sh
+
+zip -r input_angle_variable_k.zip input_angle_variable_k/*.npy
+scp input_angle_variable_k.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+zip -r input_angle_variable_k.zip input_angle_variable_k/
+rm -rf input_angle_variable_k/
+zip -r log_files_variable_k.zip log_files_variable_k/
+rm -rf log_files_variable_k/
+-------------------------------------------------------------------------------------------------------------------
+Soft constraints:
+
+cp main_stress_maj.py main_soft_constraints.py
+python3 main_soft_constraints.py input_angle_bin_sampling input1 1 2 1 2 run_neato_input1_0.dot 2 0 test_stress_maj VANILLA 1e-3 2
+
+Input 2018:
+
+mkdir input_angle_variable_k
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/layouts.zip input_angle_variable_k/
+cd input_angle_variable_k/
+unzip layouts.zip
+cd ..
+
+cp create_qsubs_cos_theta.py create_qsubs_variable_k.py
+Xscp create_qsubs_more_layouts.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xscp create_qsubs_community_angle.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+mkdir log_files_variable_k
+python3 create_qsubs_variable_k.py | create_qsub_variable_param(100, "input_angle_bin_sampling", 'crossings_angle', 'log_files_bin_sampling', 'crossings_angle_more_layouts.sh', 'dummy', 30, 2, 100, 2)
+cp run_with_param.py run_with_param_bin_sampling.py
+Xcp crossings_angle_large_k.sh crossings_angle_more_layouts.sh
+Xvi crossings_angle_more_layouts.sh | log_files_stress_maj
+Xcp crossings_angle_new_GDs_mem.sh crossings_angle_sanity_k_mem.sh
+./qsub_commands_new_GDs.sh
+
+export LOG_FOLDER=log_files_variable_k
+export RUN_WITH_PARAM=run_with_param.py
+
+Xqsub -J 1-2 -N crossings_angle -o log_files_variable_k/crossings_angle.out -e log_files_variable_k/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 3-96 -N crossings_angle -o log_files_variable_k/crossings_angle.out -e log_files_variable_k/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 97-192 -N crossings_angle -o log_files_variable_k/crossings_angle.out -e log_files_variable_k/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 193-288 -N crossings_angle -o log_files_variable_k/crossings_angle.out -e log_files_variable_k/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 289-384 -N crossings_angle -o log_files_variable_k/crossings_angle.out -e log_files_variable_k/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 385-480 -N crossings_angle -o log_files_variable_k/crossings_angle.out -e log_files_variable_k/crossings_angle.err -V crossings_angle_more_layouts.sh
+Xqsub -J 481-576 -N crossings_angle -o log_files_variable_k/crossings_angle.out -e log_files_variable_k/crossings_angle.err -V crossings_angle_more_layouts.sh
+qsub -J 577-672 -N crossings_angle -o log_files_variable_k/crossings_angle.out -e log_files_variable_k/crossings_angle.err -V crossings_angle_more_layouts.sh
+qsub -J 673-768 -N crossings_angle -o log_files_variable_k/crossings_angle.out -e log_files_variable_k/crossings_angle.err -V crossings_angle_new_GDs_mem.sh
+qsub -J 769-864 -N crossings_angle -o log_files_variable_k/crossings_angle.out -e log_files_variable_k/crossings_angle.err -V crossings_angle_new_GDs_mem.sh
+
+zip -r input_angle_variable_k.zip input_angle_variable_k/*.npy
+scp input_angle_variable_k.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+zip -r input_angle_bin_sampling.zip input_angle_bin_sampling/
+rm -rf input_angle_bin_sampling/
+zip -r log_files_bin_sampling.zip log_files_bin_sampling/
+rm -rf log_files_bin_sampling/
+-------------------------------------------------------------------------------------------------------------------
+Hard constraints:
+
+cp main_reyan.py main_hard_constraints.py
+python3 main_hard_constraints.py 0 tree_h_2 dags
+
+Dags:
+
+mkdir dags
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Downloads/dags.zip dags/
+cd dags/
+unzip dags.zip
+cd ..
+
+cp create_qsubs_variable_k.py create_qsubs_dags.py
+Xscp create_qsubs_more_layouts.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xscp create_qsubs_community_angle.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+mkdir log_files_dags
+python3 create_qsubs_dags.py | create_qsub_variable_param(100, "input_angle_bin_sampling", 'crossings_angle', 'log_files_bin_sampling', 'crossings_angle_more_layouts.sh', 'dummy', 30, 2, 100, 2)
+cp run_with_param.py run_with_param_dags.py
+Xcp crossings_angle_large_k.sh crossings_angle_more_layouts.sh
+Xvi crossings_angle_more_layouts.sh | log_files_stress_maj
+Xcp crossings_angle_new_GDs_mem.sh crossings_angle_sanity_k_mem.sh
+./qsub_commands_new_GDs.sh
+
+export LOG_FOLDER=log_files_dags
+export RUN_WITH_PARAM=run_with_param_dags.py
+
+Xqsub -J 1-2 -N upward -o log_files_dags/upward.out -e log_files_dags/upward.err -V crossings_angle_more_layouts.sh
+Xqsub -J 3-10 -N upward -o log_files_dags/upward.out -e log_files_dags/upward.err -V crossings_angle_more_layouts.sh
+
+zip -r dags.zip dags/*.npy
+scp dags.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+zip -r dags.zip dags/
+rm -rf dags/
+zip -r log_files_dags.zip log_files_dags/
+rm -rf log_files_dags/
+-------------------------------------------------------------------------------------------------------------------
+Hard constraints, undirected stress, reduce number of iterations when graph is large:
+
+cp main_hard_constraints.py main_hard_constraints_undirected.py
+python3 main_hard_constraints_undirected.py 0 tree_h_2 dags_undirected
+
+Dags:
+
+mkdir dags_undirected
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Downloads/dags.zip dags_undirected/
+cd dags_undirected/
+unzip dags.zip
+cd ..
+
+cp create_qsubs_dags.py create_qsubs_dags_undirected.py
+Xscp create_qsubs_more_layouts.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xscp create_qsubs_community_angle.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+mkdir log_files_dags_undirected
+python3 create_qsubs_dags_undirected.py | create_qsub_variable_param(100, "input_angle_bin_sampling", 'crossings_angle', 'log_files_bin_sampling', 'crossings_angle_more_layouts.sh', 'dummy', 30, 2, 100, 2)
+cp run_with_param.py run_with_param_dags.py
+Xcp crossings_angle_large_k.sh crossings_angle_more_layouts.sh
+Xvi crossings_angle_more_layouts.sh | log_files_stress_maj
+Xcp crossings_angle_new_GDs_mem.sh crossings_angle_sanity_k_mem.sh
+./qsub_commands_new_GDs.sh
+
+export LOG_FOLDER=log_files_dags_undirected
+export RUN_WITH_PARAM=run_with_param_dags.py
+
+Xqsub -J 1-3 -N upward -o log_files_dags_undirected/upward.out -e log_files_dags_undirected/upward.err -V crossings_angle_more_layouts.sh
+qsub -J 4-10 -N upward -o log_files_dags_undirected/upward.out -e log_files_dags_undirected/upward.err -V crossings_angle_more_layouts.sh
+
+zip -r dags_undirected.zip dags_undirected/*
+scp dags_undirected.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+zip -r dags_undirected.zip dags_undirected/
+rm -rf dags_undirected/
+zip -r log_files_dags_undirected.zip log_files_dags_undirected/
+rm -rf log_files_dags_undirected/
+-------------------------------------------------------------------------------------------------------------------
+Different stat for community graphs using both crossing minimization and angle maximization:
+
+['maxDeg5nodeDegreeExp-2.000000minCommunitySize2maxCommunitySize10communitySizeExp-1.000000avGDegree3iteration14graph', 'maxDeg5nodeDegreeExp-2.000000minCommunitySize2maxCommunitySize10communitySizeExp-1.000000avGDegree3iteration15graph', 'maxDeg5nodeDegreeExp-2.000000minCommunitySize2maxCommunitySize10communitySizeExp-1.000000avGDegree3iteration16graph', 'maxDeg5nodeDegreeExp-2.000000minCommunitySize2maxCommunitySize10communitySizeExp-1.000000avGDegree3iteration17graph', 'maxDeg5nodeDegreeExp-2.000000minCommunitySize2maxCommunitySize10communitySizeExp-1.000000avGDegree3iteration18graph']
+
+Community, crossing:
+
+Remove the file completed array at create_qsubs_marcel_pbs_arr
+mkdir crossing_min_random_drawing/community_crossing_3/
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/layouts.zip crossing_min_random_drawing/community_crossing_3/
+cd crossing_min_random_drawing/community_crossing_3/
+unzip layouts.zip
+rm layouts.zip
+cd ..
+cd ..
+Xcp main_jacob_new_GDs.py main_jacob_multiple_layout_formats.py
+scp main_jacob_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+scp main_jacob_shabbeer.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+cp create_qsubs_community_crossing.py create_qsubs_crossing_one_mds.py
+Xscp create_qsubs_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xscp create_qsubs_marcel_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+mkdir log_files_community_crossing_2
+debug.sh -> python3 create_qsubs_crossing_one_mds.py
+qsub -N create_qsub -o create_qsub.out -e create_qsub.err -V debug.sh
+Xcp edge_crossings_marcel_pbs_arr.sh edge_crossings_community_crossing.sh
+vi edge_crossings_community_crossing.sh -> python3 run_with_param.py < log_files_community_crossing_3/input_$PBS_ARRAY_INDEX.dat > log_files_community_crossing_3/output_$PBS_ARRAY_INDEX.dat 2> log_files_community_crossing_3/error_$PBS_ARRAY_INDEX.dat
+chmod 777 qsub_commands_marcel_new_GDs.sh
+./qsub_commands_marcel_new_GDs.sh
+
+Xqsub -J 1-2 -N edge_crossings -o log_files_community_crossing_3/edge_crossings.out -e log_files_community_crossing_3/edge_crossings.err -V edge_crossings_community_crossing.sh
+Xqsub -J 3-462 -N edge_crossings -o log_files_community_crossing_3/edge_crossings.out -e log_files_community_crossing_3/edge_crossings.err -V edge_crossings_community_crossing.sh
+Xqsub -J 463-800 -N edge_crossings -o log_files_community_crossing_3/edge_crossings.out -e log_files_community_crossing_3/edge_crossings.err -V edge_crossings_community_crossing.sh
+Xqsub -J 801-1440 -N edge_crossings -o log_files_community_crossing_3/edge_crossings.out -e log_files_community_crossing_3/edge_crossings.err -V edge_crossings_community_crossing.sh
+qsub -J 1297-1440 -N edge_crossings -o log_files_community_crossing_3/edge_crossings.out -e log_files_community_crossing_3/edge_crossings.err -V edge_crossings_community_crossing.sh
+
+cd crossing_min_random_drawing/
+zip -r community_crossing_3.zip community_crossing_3/
+rm -rf community_crossing_3/
+cd ..
+
+zip -r log_files_community_crossing_3.zip log_files_community_crossing_3/
+rm -rf log_files_community_crossing_3/
+
+scp crossing_min_random_drawing/community_crossing_3.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+Community, angle:
+
+Remove the file completed array at create_qsubs_marcel_pbs_arr
+mkdir crossing_min_random_drawing/community_angle_3/
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/layouts.zip crossing_min_random_drawing/community_angle_3/
+cd crossing_min_random_drawing/community_angle_3/
+unzip layouts.zip
+rm layouts.zip
+cd ..
+cd ..
+Xcp main_jacob_angle_new_GDs.py main_jacob_angle_multiple_layout_formats.py
+scp main_jacob_angle_multiple_layout_formats.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+scp main_jacob_multiple_layout_formats.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+cp create_qsubs_community_angle.py create_qsubs_angle_one_mds.py
+Xscp create_qsubs_community_crossing.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xscp create_qsubs_community_angle.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+mkdir log_files_community_angle_3
+debug.sh -> python3 create_qsubs_angle_one_mds.py
+qsub -N create_qsub -o create_qsub.out -e create_qsub.err -V debug.sh
+Xcp edge_crossings_marcel_pbs_arr.sh edge_crossings_community_crossing.sh
+vi edge_crossings_community_crossing.sh -> python3 run_with_param.py < log_files_community_angle_3/input_$PBS_ARRAY_INDEX.dat > log_files_community_angle_3/output_$PBS_ARRAY_INDEX.dat 2> log_files_community_angle_3/error_$PBS_ARRAY_INDEX.dat
+chmod 777 qsub_commands_marcel_new_GDs.sh
+./qsub_commands_marcel_new_GDs.sh
+
+Xqsub -J 1-500 -N edge_angle -o log_files_community_angle_3/edge_angle.out -e log_files_community_angle_3/edge_angle.err -V edge_crossings_community_crossing.sh
+Xqsub -J 501-1000 -N edge_angle -o log_files_community_angle_3/edge_angle.out -e log_files_community_angle_3/edge_angle.err -V edge_crossings_community_crossing.sh
+Xqsub -J 1001-1440 -N edge_angle -o log_files_community_angle_3/edge_angle.out -e log_files_community_angle_3/edge_angle.err -V edge_crossings_community_crossing.sh
+
+cd crossing_min_random_drawing/
+zip -r community_angle_3.zip community_angle_3/
+rm -rf community_angle_3/
+cd ..
+
+zip -r log_files_community_angle_2.zip log_files_community_angle_2/
+rm -rf log_files_community_angle_2/
+
+scp crossing_min_random_drawing/community_angle_3.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+-------------------------------------------------------------------------------------------------------------------
+Hard constraints, undirected stress, small_30_dags:
+
+Xcp main_hard_constraints.py main_hard_constraints_undirected.py
+python3 main_hard_constraints_undirected.py 0 tree_h_2 dags_undirected
+
+Dags:
+
+mkdir small_30_dags
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/small_30_dags.zip small_30_dags/
+cd small_30_dags/
+unzip small_30_dags.zip
+cd ..
+
+Xcp create_qsubs_dags.py create_qsubs_dags_undirected.py
+Xscp create_qsubs_more_layouts.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xscp create_qsubs_community_angle.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+mkdir log_files_small_30_dags
+python3 create_qsubs_dags_undirected.py | create_qsub_variable_param(100, "input_angle_bin_sampling", 'crossings_angle', 'log_files_bin_sampling', 'crossings_angle_more_layouts.sh', 'dummy', 30, 2, 100, 2)
+cp run_with_param.py run_with_param_dags.py
+Xcp crossings_angle_large_k.sh crossings_angle_more_layouts.sh
+Xvi crossings_angle_more_layouts.sh | log_files_stress_maj
+Xcp crossings_angle_new_GDs_mem.sh crossings_angle_sanity_k_mem.sh
+./qsub_commands_new_GDs.sh
+
+export LOG_FOLDER=log_files_small_30_dags
+export RUN_WITH_PARAM=run_with_param_dags.py
+
+Xqsub -J 1-2 -N upward -o log_files_small_30_dags/upward.out -e log_files_small_30_dags/upward.err -V crossings_angle_more_layouts.sh
+Xqsub -J 3-30 -N upward -o log_files_small_30_dags/upward.out -e log_files_small_30_dags/upward.err -V crossings_angle_more_layouts.sh
+
+zip -r small_30_dags.zip small_30_dags/*
+scp small_30_dags.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+zip -r dags_undirected.zip dags_undirected/
+rm -rf dags_undirected/
+zip -r log_files_dags_undirected.zip log_files_dags_undirected/
+rm -rf log_files_dags_undirected/
+-------------------------------------------------------------------------------------------------------------------
+initial 10 dags, upward lower bound =1:
+
+cp main_hard_constraints_undirected.py main_hard_constraints_up_bound_1.py
+python3 main_hard_constraints_undirected.py 0 tree_h_2 dags_undirected
+
+Dags:
+
+mkdir dags_up_bound_1
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Downloads/dags.zip dags_up_bound_1/
+cd dags_up_bound_1/
+unzip dags.zip
+cd ..
+
+cp create_qsubs_dags_undirected.py create_qsubs_dags_up_bound_1.py
+Xscp create_qsubs_more_layouts.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xscp create_qsubs_community_angle.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+mkdir log_files_dags_up_bound_1
+python3 create_qsubs_dags_up_bound_1.py | create_qsub_variable_param(100, "input_angle_bin_sampling", 'crossings_angle', 'log_files_bin_sampling', 'crossings_angle_more_layouts.sh', 'dummy', 30, 2, 100, 2)
+cp run_with_param.py run_with_param_dags.py
+Xcp crossings_angle_large_k.sh crossings_angle_more_layouts.sh
+Xvi crossings_angle_more_layouts.sh | log_files_stress_maj
+Xcp crossings_angle_new_GDs_mem.sh crossings_angle_sanity_k_mem.sh
+./qsub_commands_new_GDs.sh
+
+export LOG_FOLDER=log_files_dags_up_bound_1
+export RUN_WITH_PARAM=run_with_param_dags.py
+
+Xqsub -J 8-9 -N upward -o log_files_dags_up_bound_1/upward.out -e log_files_dags_up_bound_1/upward.err -V crossings_angle_more_layouts.sh
+qsub -J 1-9 -N upward -o log_files_dags_up_bound_1/upward.out -e log_files_dags_up_bound_1/upward.err -V crossings_angle_more_layouts.sh
+
+zip -r dags_up_bound_1.zip dags_up_bound_1/*
+scp dags_up_bound_1.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+zip -r dags_undirected.zip dags_undirected/
+rm -rf dags_undirected/
+zip -r log_files_dags_undirected.zip log_files_dags_undirected/
+rm -rf log_files_dags_undirected/
+-------------------------------------------------------------------------------------------------------------------
+Convergence plot:
+
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/main_angle_stress_maj_convergence.py ./
+
+mkdir graph_convergence
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/input5.txt graph_convergence/input5Y2018.txt
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/input6.txt graph_convergence/input6Y2018.txt
+
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/maxDeg5nodeDegreeExp-2.000000minCommunitySize2maxCommunitySize10communitySizeExp-1.000000avGDegree3iteration100graph.txt graph_convergence/community_100.txt
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/maxDeg5nodeDegreeExp-2.000000minCommunitySize2maxCommunitySize10communitySizeExp-1.000000avGDegree3iteration10graph.txt graph_convergence/community_10.txt
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/maxDeg5nodeDegreeExp-2.000000minCommunitySize2maxCommunitySize10communitySizeExp-1.000000avGDegree3iteration11graph.txt graph_convergence/community_11.txt
+
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/input1.txt graph_convergence/input1Y2018.txt
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/input9.txt graph_convergence/input9Y2018.txt
+
+# change the arguments in main_angle_stress_maj_convergence.py
+# folder, file
+# GD_OPTIONS = ['VANILLA', 'MOMENTUM', 'NESTEROV', 'ADAGRAD', 'RMSPROP', 'ADAM']
+# alpha_arr = ['1e-3', '1e-3', '1e-3', '1e-1', '1e-1', '1e-1'] # learning rate
+
+vi debug.sh -> python3 main_angle_stress_maj_convergence.py
+qsub -N debug -o debug.out -e debug.err -V debug.sh
+
+export LOG_FOLDER=graph_convergence
+export RUN_WITH_PARAM=run_with_param_convergence.py
+
+qsub -J 1-2 -N convergence -o graph_convergence/convergence.out -e graph_convergence/convergence.err -V crossings_angle_more_layouts.sh
+qsub -J 3-6 -N convergence -o graph_convergence/convergence.out -e graph_convergence/convergence.err -V crossings_angle_more_layouts.sh
+
+zip -r logs_input5Y2018.zip graph_convergence/logs*
+zip -r logs_input6Y2018.zip graph_convergence/logs_input6*
+zip -r logs_community_100.zip graph_convergence/logs_community_100*
+zip -r logs_community_10.zip graph_convergence/logs_community_10*
+zip -r logs_community_11.zip graph_convergence/logs_community_11*
+zip -r logs_input1Y2018.zip graph_convergence/logs_input1*
+zip -r logs_input9Y2018.zip graph_convergence/logs_input9*
+scp logs_input5Y2018.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+scp logs_input6Y2018.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+scp logs_community_100.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+scp logs_community_10.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+scp logs_community_11.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+scp logs_input1Y2018.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+scp logs_input9Y2018.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+-------------------------------------------------------------------------------------------------------------------
+small_30_dags, upward lower bound =1:
+
+cp main_hard_constraints_undirected.py main_hard_constraints_up_bound_1.py
+python3 main_hard_constraints_undirected.py 0 tree_h_2 dags_undirected
+
+Dags:
+
+# Caution: the following command does not work, it creates an extra folder.
+mkdir small_30_dags_up_bound_1
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/small_30_dags.zip small_30_dags_up_bound_1/
+cd small_30_dags_up_bound_1/
+unzip small_30_dags.zip
+cd ..
+
+cp create_qsubs_dags_undirected.py create_qsubs_dags_up_bound_1.py
+Xscp create_qsubs_more_layouts.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xscp create_qsubs_community_angle.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+mkdir log_files_small_30_dags_up_bound_1
+python3 create_qsubs_dags_up_bound_1.py | create_qsub_variable_param(100, "input_angle_bin_sampling", 'crossings_angle', 'log_files_bin_sampling', 'crossings_angle_more_layouts.sh', 'dummy', 30, 2, 100, 2)
+cp run_with_param.py run_with_param_dags.py
+Xcp crossings_angle_large_k.sh crossings_angle_more_layouts.sh
+Xvi crossings_angle_more_layouts.sh | log_files_stress_maj
+Xcp crossings_angle_new_GDs_mem.sh crossings_angle_sanity_k_mem.sh
+./qsub_commands_new_GDs.sh
+
+export LOG_FOLDER=log_files_small_30_dags_up_bound_1
+export RUN_WITH_PARAM=run_with_param_dags.py
+
+qsub -J 1-30 -N upward -o log_files_small_30_dags_up_bound_1/upward.out -e log_files_small_30_dags_up_bound_1/upward.err -V crossings_angle_more_layouts.sh
+
+zip -r small_30_dags_up_bound_1.zip small_30_dags_up_bound_1/*
+scp small_30_dags_up_bound_1.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+zip -r dags_undirected.zip dags_undirected/
+rm -rf dags_undirected/
+zip -r log_files_dags_undirected.zip log_files_dags_undirected/
+rm -rf log_files_dags_undirected/
+-------------------------------------------------------------------------------------------------------------------
+small_30_dags_missing_graphs
+
+cp main_hard_constraints_undirected.py main_hard_constraints_up_bound_1.py
+python3 main_hard_constraints_undirected.py 0 tree_h_2 dags_undirected
+
+Dags:
+
+mkdir small_30_dags_missing_graphs
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/small_30_dags_missing_graphs.zip small_30_dags_missing_graphs/
+cd small_30_dags_missing_graphs/
+unzip small_30_dags_missing_graphs.zip
+cd ..
+
+cp create_qsubs_dags_undirected.py create_qsubs_dags_up_bound_1.py
+Xscp create_qsubs_more_layouts.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xscp create_qsubs_community_angle.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+mkdir log_files_small_30_dags_up_bound_1
+python3 create_qsubs_dags_up_bound_1.py | create_qsub_variable_param(100, "input_angle_bin_sampling", 'crossings_angle', 'log_files_bin_sampling', 'crossings_angle_more_layouts.sh', 'dummy', 30, 2, 100, 2)
+cp run_with_param.py run_with_param_dags.py
+Xcp crossings_angle_large_k.sh crossings_angle_more_layouts.sh
+Xvi crossings_angle_more_layouts.sh | log_files_stress_maj
+Xcp crossings_angle_new_GDs_mem.sh crossings_angle_sanity_k_mem.sh
+./qsub_commands_new_GDs.sh
+         
+export LOG_FOLDER=log_files_small_30_dags_missing_graphs
+export RUN_WITH_PARAM=run_with_param_dags.py
+
+qsub -J 1-3 -N upward -o log_files_small_30_dags_missing_graphs/upward.out -e log_files_small_30_dags_missing_graphs/upward.err -V crossings_angle_more_layouts.sh
+ 
+zip -r small_30_dags_missing_graphs.zip small_30_dags_missing_graphs/*
+scp small_30_dags_missing_graphs.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+    
+zip -r dags_undirected.zip dags_undirected/
+rm -rf dags_undirected/ 
+zip -r log_files_dags_undirected.zip log_files_dags_undirected/
+rm -rf log_files_dags_undirected/
+-------------------------------------------------------------------------------------------------------------------
+small_27_dags_iterations_10_4
+
+cp main_hard_constraints_up_bound_1.py main_hard_constraints_iterations_10_4.py
+python3 main_hard_constraints_undirected.py 0 tree_h_2 dags_undirected
+
+Dags:
+
+mkdir small_27_dags_iterations_10_4
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/small_27_dags_iterations_10_4.zip small_27_dags_iterations_10_4/
+cd small_27_dags_iterations_10_4/
+unzip small_27_dags_iterations_10_4.zip
+cd ..
+
+cp create_qsubs_dags_up_bound_1.py create_qsubs_iterations_10_4.py
+Xscp create_qsubs_more_layouts.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xscp create_qsubs_community_angle.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+mkdir log_files_small_27_dags_iterations_10_4
+python3 create_qsubs_iterations_10_4.py | create_qsub_variable_param(100, "input_angle_bin_sampling", 'crossings_angle', 'log_files_bin_sampling', 'crossings_angle_more_layouts.sh', 'dummy', 30, 2, 100, 2)
+cp run_with_param.py run_with_param_dags.py
+Xcp crossings_angle_large_k.sh crossings_angle_more_layouts.sh
+Xvi crossings_angle_more_layouts.sh | log_files_stress_maj
+Xcp crossings_angle_new_GDs_mem.sh crossings_angle_sanity_k_mem.sh
+./qsub_commands_new_GDs.sh
+         
+export LOG_FOLDER=log_files_small_27_dags_iterations_10_4
+export RUN_WITH_PARAM=run_with_param_dags.py
+        
+qsub -J 1-30 -N upward -o log_files_small_27_dags_iterations_10_4/upward.out -e log_files_small_27_dags_iterations_10_4/upward.err -V crossings_angle_more_layouts.sh
+      
+zip -r small_27_dags_iterations_10_4.zip small_27_dags_iterations_10_4/*
+scp small_27_dags_iterations_10_4.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+    
+zip -r dags_undirected.zip dags_undirected/
+rm -rf dags_undirected/ 
+zip -r log_files_dags_undirected.zip log_files_dags_undirected/
+rm -rf log_files_dags_undirected/
+-------------------------------------------------------------------------------------------------------------------
+small_3_dags_iterations_10_4
+
+cp main_hard_constraints_up_bound_1.py main_hard_constraints_iterations_10_4.py
+python3 main_hard_constraints_undirected.py 0 tree_h_2 dags_undirected
+
+Dags:
+
+mkdir small_3_dags_iterations_10_4
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/small_3_dags_iterations_10_4.zip small_3_dags_iterations_10_4/
+cd small_3_dags_iterations_10_4/
+unzip small_3_dags_iterations_10_4.zip
+cd ..
+
+cp create_qsubs_dags_up_bound_1.py create_qsubs_iterations_10_4.py
+Xscp create_qsubs_more_layouts.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xscp create_qsubs_community_angle.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+mkdir log_files_small_3_dags_iterations_10_4
+python3 create_qsubs_iterations_10_4.py | create_qsub_variable_param(100, "input_angle_bin_sampling", 'crossings_angle', 'log_files_bin_sampling', 'crossings_angle_more_layouts.sh', 'dummy', 30, 2, 100, 2)
+cp run_with_param.py run_with_param_dags.py
+Xcp crossings_angle_large_k.sh crossings_angle_more_layouts.sh
+Xvi crossings_angle_more_layouts.sh | log_files_stress_maj
+Xcp crossings_angle_new_GDs_mem.sh crossings_angle_sanity_k_mem.sh
+./qsub_commands_new_GDs.sh
+          
+export LOG_FOLDER=log_files_small_3_dags_iterations_10_4
+export RUN_WITH_PARAM=run_with_param_dags.py
+         
+qsub -J 1-3 -N upward -o log_files_small_3_dags_iterations_10_4/upward.out -e log_files_small_3_dags_iterations_10_4/upward.err -V crossings_angle_more_layouts.sh
+ 
+zip -r small_3_dags_iterations_10_4.zip small_3_dags_iterations_10_4/*
+scp small_3_dags_iterations_10_4.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+    
+zip -r dags_undirected.zip dags_undirected/
+rm -rf dags_undirected/ 
+zip -r log_files_dags_undirected.zip log_files_dags_undirected/
+rm -rf log_files_dags_undirected/
+-------------------------------------------------------------------------------------------------------------------
+Running time of 25 community graphs:
+
+vi running_time_25_community_graphs.py
+-------------------------------------------------------------------------------------------------------------------
+Hard constraints, undirected stress, small_3_dags_undirected:
+
+Xcp main_hard_constraints.py main_hard_constraints_undirected.py
+python3 main_hard_constraints_undirected.py 0 tree_h_2 dags_undirected
+
+Dags:
+
+mkdir small_3_dags_undirected
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/small_3_dags_undirected.zip small_3_dags_undirected/
+cd small_3_dags_undirected/
+unzip small_3_dags_undirected.zip
+cd ..
+
+Xcp create_qsubs_dags.py create_qsubs_dags_undirected.py
+Xscp create_qsubs_more_layouts.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xscp create_qsubs_community_angle.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+mkdir log_files_small_3_dags_undirected
+python3 create_qsubs_dags_undirected.py | create_qsub_variable_param(100, "input_angle_bin_sampling", 'crossings_angle', 'log_files_bin_sampling', 'crossings_angle_more_layouts.sh', 'dummy', 30, 2, 100, 2)
+cp run_with_param.py run_with_param_dags.py
+Xcp crossings_angle_large_k.sh crossings_angle_more_layouts.sh
+Xvi crossings_angle_more_layouts.sh | log_files_stress_maj
+Xcp crossings_angle_new_GDs_mem.sh crossings_angle_sanity_k_mem.sh
+./qsub_commands_new_GDs.sh
+
+export LOG_FOLDER=log_files_small_3_dags_undirected
+export RUN_WITH_PARAM=run_with_param_dags.py
+
+qsub -J 1-3 -N upward -o log_files_small_3_dags_undirected/upward.out -e log_files_small_3_dags_undirected/upward.err -V crossings_angle_more_layouts.sh
+
+zip -r small_3_dags_undirected.zip small_3_dags_undirected/*
+scp small_3_dags_undirected.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+zip -r dags_undirected.zip dags_undirected/
+rm -rf dags_undirected/
+zip -r log_files_dags_undirected.zip log_files_dags_undirected/
+rm -rf log_files_dags_undirected/
+-------------------------------------------------------------------------------------------------------------------
+Hard constraints, undirected stress, small_3_dags_2:
+
+Xcp main_hard_constraints.py main_hard_constraints_undirected.py
+python3 main_hard_constraints_undirected.py 0 tree_h_2 dags_undirected
+
+Dags:
+
+mkdir small_3_dags_2
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/small_3_dags_2.zip small_3_dags_2/
+cd small_3_dags_2/
+unzip small_3_dags_2.zip
+cd ..
+
+Xcp create_qsubs_dags.py create_qsubs_dags_undirected.py
+Xscp create_qsubs_more_layouts.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xscp create_qsubs_community_angle.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+mkdir log_files_small_3_dags_2
+python3 create_qsubs_dags_undirected.py | create_qsub_variable_param(100, "input_angle_bin_sampling", 'crossings_angle', 'log_files_bin_sampling', 'crossings_angle_more_layouts.sh', 'dummy', 30, 2, 100, 2)
+cp run_with_param.py run_with_param_dags.py
+Xcp crossings_angle_large_k.sh crossings_angle_more_layouts.sh
+Xvi crossings_angle_more_layouts.sh | log_files_stress_maj
+Xcp crossings_angle_new_GDs_mem.sh crossings_angle_sanity_k_mem.sh
+./qsub_commands_new_GDs.sh
+          
+export LOG_FOLDER=log_files_small_3_dags_2
+export RUN_WITH_PARAM=run_with_param_dags.py
+
+qsub -J 1-3 -N upward -o log_files_small_3_dags_2/upward.out -e log_files_small_3_dags_2/upward.err -V crossings_angle_more_layouts.sh
+
+zip -r small_3_dags_2.zip small_3_dags_2/*
+scp small_3_dags_2.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+    
+zip -r dags_undirected.zip dags_undirected/
+rm -rf dags_undirected/
+zip -r log_files_dags_undirected.zip log_files_dags_undirected/
+rm -rf log_files_dags_undirected/
+-------------------------------------------------------------------------------------------------------------------
+Different stat for community graphs using both crossing minimization and angle maximization:
+
+['maxDeg5nodeDegreeExp-2.000000minCommunitySize2maxCommunitySize10communitySizeExp-1.000000avGDegree3iteration14graph', 'maxDeg5nodeDegreeExp-2.000000minCommunitySize2maxCommunitySize10communitySizeExp-1.000000avGDegree3iteration15graph', 'maxDeg5nodeDegreeExp-2.000000minCommunitySize2maxCommunitySize10communitySizeExp-1.000000avGDegree3iteration16graph', 'maxDeg5nodeDegreeExp-2.000000minCommunitySize2maxCommunitySize10communitySizeExp-1.000000avGDegree3iteration17graph', 'maxDeg5nodeDegreeExp-2.000000minCommunitySize2maxCommunitySize10communitySizeExp-1.000000avGDegree3iteration18graph']
+
+Community, crossing:
+
+Remove the file completed array at create_qsubs_marcel_pbs_arr
+mkdir crossing_min_random_drawing/dodec_and_twin/
+scp abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/layouts.zip crossing_min_random_drawing/dodec_and_twin/
+cd crossing_min_random_drawing/dodec_and_twin/
+unzip layouts.zip
+rm layouts.zip
+cd ..
+cd ..
+Xcp main_jacob_new_GDs.py main_jacob_multiple_layout_formats.py
+scp main_jacob_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+scp main_jacob_shabbeer.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+cp create_qsubs_community_crossing.py create_qsubs_crossing_one_mds.py
+Xscp create_qsubs_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+Xscp create_qsubs_marcel_new_GDs.py abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+mkdir log_files_community_crossing_2
+debug.sh -> python3 create_qsubs_crossing_one_mds.py
+qsub -N create_qsub -o create_qsub.out -e create_qsub.err -V debug.sh
+Xcp edge_crossings_marcel_pbs_arr.sh edge_crossings_community_crossing.sh
+vi edge_crossings_community_crossing.sh -> python3 run_with_param.py < log_files_community_crossing_2/input_$PBS_ARRAY_INDEX.dat > log_files_community_crossing_2/output_$PBS_ARRAY_INDEX.dat 2> log_files_community_crossing_2/error_$PBS_ARRAY_INDEX.dat
+chmod 777 qsub_commands_marcel_new_GDs.sh
+./qsub_commands_marcel_new_GDs.sh
+
+qsub -J 1-2 -N edge_crossings -o log_files_dodec_and_twin/edge_crossings.out -e log_files_dodec_and_twin/edge_crossings.err -V edge_crossings_community_crossing.sh
+qsub -J 3-96 -N edge_crossings -o log_files_dodec_and_twin/edge_crossings.out -e log_files_dodec_and_twin/edge_crossings.err -V edge_crossings_community_crossing.sh
+qsub -J 97-192 -N edge_crossings -o log_files_dodec_and_twin/edge_crossings.out -e log_files_dodec_and_twin/edge_crossings.err -V edge_crossings_community_crossing.sh
+
+
+cd crossing_min_random_drawing/
+zip -r dodec_and_twin.zip dodec_and_twin/
+rm -rf dodec_and_twin/
+cd ..
+
+zip -r log_files_community_crossing_2.zip log_files_community_crossing_2/
+rm -rf log_files_community_crossing_2/
+
+scp crossing_min_random_drawing/dodec_and_twin.zip abureyanahmed@lectura.cs.arizona.edu:/home/abureyanahmed/Desktop/GD2018/
+
+
+
